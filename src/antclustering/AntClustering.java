@@ -16,23 +16,23 @@ public class AntClustering {
     static int limittime = 4;
     
     public static void main(String[] args) {
-        Field grand = new Field();
-        local_initial_parameters(grand);
+        Field field = new Field();
+        local_initial_parameters(field);
         System.out.println("\n終了");
     }
     
-    public static void local_initial_parameters(Field grand){     
-        grand.set(size,object,kind,ant,iteration,limittime);
-        grand.Fieldset();
+    public static void local_initial_parameters(Field field){     
+        field.set(size,object,kind,ant,iteration,limittime);
+        field.Fieldset();
         System.out.println("配置完了");
 //        grand.Check();
-        grand.NotAntCheck();
+        field.NotAntCheck();
         System.out.println("\nクラスタリング開始");
-        grand.Clustering();
+        field.Clustering();
         System.out.println("クラスタリング終了");
         System.out.println("\n/*********************************************/");
-        grand.NotAntCheck();
+        field.NotAntCheck();
         System.out.println("\n/*********************************************/");
-        grand.Check();
+        field.Check();
     }
 }

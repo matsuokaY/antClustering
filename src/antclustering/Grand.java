@@ -9,6 +9,7 @@ public class Grand {
     
     public int ANT;
     
+    
     public void setting(int ant){
         this.ANT = ant;
         

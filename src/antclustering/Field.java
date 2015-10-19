@@ -1,6 +1,8 @@
 package antclustering;
 
 import java.util.Random;
+import antclustering.Grand;
+import antclustering.ant;
 
 /*******
  * 0：配置なし
@@ -50,6 +52,7 @@ public class Field {
 //**********************************************************************************************//
     //***数値の初期化***//
     public void set(int size,int object,int kind,int ant,int iteration,int limitmovetime){
+        grand = new Grand();
         MAX_size = size;
         MAX_object = object;
         MAX_kind = kind;
@@ -358,19 +361,7 @@ public class Field {
             System.out.println("");
         }
     }
-//**********************************************************************************************//    
-    //***ユークリッド距離の計算***//
-    public static double EuclideanLenght(int x1,int y1,int x2,int y2){
-        return Math.sqrt(Math.pow(x1-x2,2)+Math.pow(y1-y2,2));
-    }
-    //***座標表示関数**//
-    public static String coordinate(int an){
-        int x = ant[an].Location.x;
-        int y = ant[an].Location.y;
-        
-        return ("("+x+","+y+")") ;
-    }
-    
+    //***表示***//
     public void Print(int i){
         if(i==ThirdIteration){
                 System.out.print("\r");
@@ -388,6 +379,19 @@ public class Field {
                 System.out.println("\r");
             }
     }
+//**********************************************************************************************//    
+    //***ユークリッド距離の計算***//
+    public static double EuclideanLenght(int x1,int y1,int x2,int y2){
+        return Math.sqrt(Math.pow(x1-x2,2)+Math.pow(y1-y2,2));
+    }
+    //***座標表示関数**//
+    public static String coordinate(int an){
+        int x = ant[an].Location.x;
+        int y = ant[an].Location.y;
+        
+        return ("("+x+","+y+")") ;
+    }
+    
             
 }
     
