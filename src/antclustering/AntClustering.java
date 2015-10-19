@@ -12,7 +12,7 @@ public class AntClustering {
     static int object = 200;
     static int kind =  3;
     static int ant = 300;
-    static int iteration = 1000000;
+    static int iteration = 10000;
     static int limittime = 4;
     
     public static void main(String[] args) {
@@ -23,7 +23,7 @@ public class AntClustering {
     
     public static void local_initial_parameters(Field grand){     
         grand.set(size,object,kind,ant,iteration,limittime);
-        grand.Grandset();
+        grand.Fieldset();
         System.out.println("配置完了");
 //        grand.Check();
         grand.NotAntCheck();
@@ -32,7 +32,7 @@ public class AntClustering {
         System.out.println("クラスタリング終了");
         System.out.println("\n/*********************************************/");
         grand.NotAntCheck();
-//        System.out.println("\n/*********************************************/");
-//        grand.Check();
+        System.out.println("\n/*********************************************/");
+        grand.Check();
     }
 }
