@@ -14,8 +14,7 @@ public class ant {
     //移動速度
     public double v;
 
-    public int oldX;
-    public int oldY;
+    public Point old;
     public int around;
     public int time;
     
@@ -23,14 +22,11 @@ public class ant {
     //***蟻の配置***//
     public void set(int x,int y,int z,int state){
         this.Location = new Point(x,y);
+        this.old = new Point(x,y);
         this.State = state;
         this.No = z;
     }
      
-    public Point Location(){
-        return Location;
-    }
-    
     public void Pick(int x,int y,Grand grand){
         this.State = grand.cloneState[y][x]-Field.ANT;
         grand.cloneState[y][x] = Field.ANT;

@@ -20,6 +20,10 @@ public class Grand {
     public void setState(int x,int y,int kind){
         this.state[y][x] = kind;
     }
+    public void resetAnt(ant an){
+        setAnt(an.Location.x,an.Location.y);
+        removeAnt(an.old.x,an.old.y);
+    }
     public void setAnt(int x,int y){
         this.state[y][x] += ANT;
     }
@@ -90,4 +94,5 @@ public class Grand {
             }
         return count;
     }
+    
 }

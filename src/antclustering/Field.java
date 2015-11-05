@@ -133,97 +133,90 @@ public class Field {
 //**********************************************************************************************//    
     //***蟻の移動　ランダム***//
     public void wander(){   
-        int oldx,oldy;
         //蟻すべてがランダムに移動
         for(int an=0;an<(int)(MAX_ant);an++){
             //移動が完了するまで
-            oldx = ant[an].Location.x;
-            oldy = ant[an].Location.y;
             if(ant[an].time < limitMoveTime){
-                Move(an,oldx,oldy);
+                Move(ant[an]);
             }else{
-                Move2(an,oldx,oldy);
+                Move2(ant[an]);
             }
         }
+        int result=antOperation.Punctuation(ant);
 /*        for(int an=(int) (MAX_ant*0.9);an<MAX_ant;an++){
-            oldx = ant[an].Location.x;
-            oldy = ant[an].Location.y;
             if(ant[an].time < limitMoveTime){
-                Moves(an,oldx,oldy);
+                Moves(ant[an]);
             }else{
-                Moves(an,oldx,oldy);
+                Moves2(ant[an]);
             }
         }*/
     }
     //***ランダム移動　1マス***//
-    public void Move(int an,int oldx,int oldy){
+    public void Move(ant an){
         int k,x,y,count=0;
         Random rnd = new Random();
         while(count<30){
             count++;
             k = rnd.nextInt(movex.length);
-            x = oldx + movex[k];
-            y = oldy + movey[k];
+            x = an.old.x + movex[k];
+            y = an.old.y + movey[k];
             //移動先が存在する　かつ　移動先に蟻がいない
             if((x>0&&x<MAX_size)&&(y>0&&y<MAX_size)&&grand.state[y][x]<ANT){
                 //以前の位置から蟻を削除                   
-                grand.removeAnt(oldx,oldy);
                 //蟻の移動
-                ant[an].Location.x = x;
-                ant[an].Location.y = y;
-                ant[an].oldX = x;
-                ant[an].oldY = y;
+                an.Location.x = x;
+                an.Location.y = y;
                 //移動後の位置に蟻を追加
-                grand.setAnt(x, y);
+                grand.resetAnt(an);
+                an.old.x = x;
+                an.old.y = y;
                 //ループ強制抜け
                 break;
             }
         }        
     }
     //***ランダム移動　2マス***//
-    public void Move2(int an,int oldx,int oldy){
+    public void Move2(ant an){
         int k,x,y,count=0;
         Random rnd = new Random();
         while(count<40){
                 count++;
                 k = rnd.nextInt(moveX.length);
-                x = oldx + moveX[k];
-                y = oldy + moveY[k];
+                x = an.old.x + moveX[k];
+                y = an.old.y + moveY[k];
                 //移動先が存在する　かつ　移動先に蟻がいない
                 if((x>0&&x<MAX_size)&&(y>0&&y<MAX_size)&&grand.state[y][x]<ANT){
                     //以前の位置から蟻を削除                   
-                    grand.removeAnt(oldx,oldy);
                     //蟻の移動
-                    ant[an].Location.x = x;
-                    ant[an].Location.y = y;
-                    ant[an].oldX = x;
-                    ant[an].oldY = y;
+                    an.Location.x = x;
+                    an.Location.y = y;
                     //移動後の位置に蟻を追加
-                    grand.setAnt(x, y);
+                    grand.resetAnt(an);
+                    an.old.x = x;
+                    an.old.y = y;
                     //ループ強制抜け
                     break;
                 }
             }
     }
-    public void Moves(int an,int oldx,int oldy){
+    public void Moves(ant an){
         int k,x,y,count=0;
         Random rnd = new Random();
         while(count<30){
             count++;
             k = rnd.nextInt(movex.length);
-            x = oldx + movex[k];
-            y = oldy + movey[k];
+            x = an.old.x + movex[k];
+            y = an.old.y + movey[k];
             //移動先が存在する　かつ　移動先に蟻がいない
             if((x>0&&x<MAX_size)&&(y>0&&y<MAX_size)&&grand.state[y][x]<ANT){
                 //以前の位置から蟻を削除                   
-                grand.removeAnt(oldx,oldy);
                 //蟻の移動
-                ant[an].Location.x = x;
-                ant[an].Location.y = y;
-                ant[an].oldX = x;
-                ant[an].oldY = y;
+                an.Location.x = x;
+                an.Location.y = y;
                 //移動後の位置に蟻を追加
-                grand.setAnt(x, y);
+                grand.resetAnt(an);
+                an.old.x = x;
+                an.old.y = y;
                 //ループ強制抜け
                 break;
             }
@@ -272,6 +265,18 @@ public class Field {
             System.out.println("");
         }
     }
+    public void CheckAnt(){
+        for (int[] loop : grand.state) {
+            for (int j = 0; j<grand.state.length; j++) {
+                if (loop[j] < ANT) {
+                    System.out.print(0 + " ");
+                } else {
+                    System.out.print(ANT + " ");
+                }
+            }
+            System.out.println("");
+        }
+    }
     //***表示***//
     public void Print(int i){
         if(i==ThirdIteration){
@@ -281,7 +286,7 @@ public class Field {
                 System.out.print("--------------------"+i+"--------------------");
             }
             else if(Iteration>=1000000&&i==0){
-                System.out.println("\n");
+                System.out.println("\r");
                 System.out.print("--------------------"+i+"--------------------");
             }else if(i%limitCount==0){
                 System.out.print("\r");

@@ -80,5 +80,22 @@ public class antOperation {
     }
     
     //**********************************************************************************************//    
-
+    public static int Punctuation(ant[] ant){
+        int[] result = {0,0,0,0};
+        for(int i=0;i<ant.length;i++){
+            if(ant[i].Location.x<=Field.MAX_size/2&&ant[i].Location.y<=Field.MAX_size/2)
+                result[0]++;
+            else if(ant[i].Location.x<=Field.MAX_size/2&&Field.MAX_size/2<ant[i].Location.y)
+                result[1]++;
+            else if(Field.MAX_size/2<ant[i].Location.x&&ant[i].Location.y<=Field.MAX_size/2)
+                result[2]++;
+            else if(Field.MAX_size/2<ant[i].Location.x&&Field.MAX_size/2<ant[i].Location.y)
+                result[3]++;
+        }
+        int max=0;
+        for(int j=1;j<result.length;j++)
+            if(result[max]<result[j])
+                max=j;
+        return max;
+    }
 }
