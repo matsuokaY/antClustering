@@ -3,6 +3,7 @@ package antclustering;
 import java.util.Random;
 import antclustering.Grand;
 import antclustering.ant;
+import java.awt.Point;
 
 /*******
  * 0：配置なし
@@ -30,6 +31,7 @@ public class Field {
     static final int[] moveX = {-2,-1, 0, 1, 2,-2,-1, 0, 1, 2,-2,-1, 1, 2,-2,-1, 0, 1, 2,-2,-1, 0, 1, 2};
     static final int[] moveY = {-2,-2,-2,-2,-2,-1,-1,-1,-1,-1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2};
     
+    static Point[] S = new Point[4];
     //*****************************************************************************//
     static int MAX_size;
     static int MAX_object;
@@ -58,20 +60,34 @@ public class Field {
         MAX_ant = ant;
         MAX_state = kind*2+1;
         ANT = kind +1;
-        grand.setting(ANT,MAX_size);
         Iteration = iteration;
         limitMoveTime = limitmovetime;
         limitKeepTime = (int) (limitmovetime*1.5);
         limitCount = iteration / 100;
         HalfIteration = iteration/2;
         ThirdIteration = iteration/3;
-        
-        
+        setS();
+         
+    }
+    public void setS(){
+        S[0] = new Point();
+        S[1] = new Point();
+        S[2] = new Point();
+        S[3] = new Point();
+        S[0].x=MAX_size/4;
+        S[0].y=MAX_size/4;
+        S[1].x=3*MAX_size/4;
+        S[1].y=MAX_size/4;
+        S[2].x=MAX_size/4;
+        S[2].y=3*MAX_size/4;
+        S[3].x=3*MAX_size/4;
+        S[3].y=3*MAX_size/4;
     }
     //***初期配置を行う***//
     public void Fieldset(){
         Random rnd = new Random();
         grand.state = new int[MAX_size][MAX_size];
+        grand.ant = new int[MAX_size][MAX_size];
         ant = new ant[MAX_ant];
         int object_x,object_y,object_kind,ant_size=0,object_size=0;
         //蟻の作成
@@ -93,7 +109,7 @@ public class Field {
                     object_size++;
                 //蟻の配置
                 }else if(grand.state[object_y][object_x]<ANT && object_kind == ANT && ant_size<MAX_ant){
-                    ant[ant_size].set(object_x,object_y,ant_size,0 );
+                    ant[ant_size].set(object_x,object_y,ant_size,0);
                     grand.setAnt(object_x,object_y);
                     ant_size++;
                 }
@@ -116,7 +132,7 @@ public class Field {
             for(int an=0;an<MAX_ant;an++){
                 x = ant[an].Location.x;
                 y = ant[an].Location.y;
-                double F = grand.Neight(ant[an],Range);
+//                double F = grand.Neight(ant[an],Range);
                 //持ち上げられる状態か
                 if(antOperation.pick(ant[an],antClone[an],grand,i,x,y));
                 //降ろせる状態か
@@ -134,7 +150,8 @@ public class Field {
     //***蟻の移動　ランダム***//
     public void wander(){   
         //蟻すべてがランダムに移動
-        for(int an=0;an<(int)(MAX_ant);an++){
+        int an=0;
+        for(;an<(int)(MAX_ant*0.8);an++){
             //移動が完了するまで
             if(ant[an].time < limitMoveTime){
                 Move(ant[an]);
@@ -143,13 +160,13 @@ public class Field {
             }
         }
         int result=antOperation.Punctuation(ant);
-/*        for(int an=(int) (MAX_ant*0.9);an<MAX_ant;an++){
+        for(;an<MAX_ant;an++){
             if(ant[an].time < limitMoveTime){
-                Moves(ant[an]);
+                Moves(ant[an],result);
             }else{
-                Moves2(ant[an]);
+                Moves(ant[an],result);
             }
-        }*/
+        }
     }
     //***ランダム移動　1マス***//
     public void Move(ant an){
@@ -199,14 +216,18 @@ public class Field {
                 }
             }
     }
-    public void Moves(ant an){
+    public void Moves(ant an,int i){
         int k,x,y,count=0;
         Random rnd = new Random();
         while(count<30){
             count++;
-            k = rnd.nextInt(movex.length);
-            x = an.old.x + movex[k];
-            y = an.old.y + movey[k];
+            while(true){
+                k = rnd.nextInt(movex.length);
+                x = an.old.x + movex[k];
+                y = an.old.y + movey[k];
+                if(EuclideanLenght(S[i].x,S[i].y,x,y)-EuclideanLenght(S[i].x,S[i].y,an.old.x,an.old.y)>0)
+                    break;
+            }
             //移動先が存在する　かつ　移動先に蟻がいない
             if((x>0&&x<MAX_size)&&(y>0&&y<MAX_size)&&grand.state[y][x]<ANT){
                 //以前の位置から蟻を削除                   
@@ -227,10 +248,13 @@ public class Field {
     public void Check(){    
         int object[]=new int[MAX_state+1];
         int object2[]=new int[ANT];
-        for (int[] loop : grand.state) {
+        for (int i=0;i<grand.state.length;i++) {
             for (int j = 0; j<grand.state.length; j++) {
-                System.out.print(loop[j] + " ");
-                object[loop[j]]++;                    
+                if(grand.ant[i][j]==0)
+                    System.out.print(grand.state[i][j] + " ");
+                else
+                    System.out.print((grand.state[i][j]+MAX_kind) + " ");
+                object[grand.state[i][j]]++;                    
             }
             System.out.println("");
         }
@@ -256,23 +280,15 @@ public class Field {
     public void NotAntCheck(){
         for (int[] loop : grand.state) {
             for (int j = 0; j<grand.state.length; j++) {
-                if (loop[j] < ANT) {
-                    System.out.print(loop[j] + " ");
-                } else {
-                    System.out.print(loop[j] - ANT + " ");
-                }
+                System.out.print(loop[j] + " ");   
             }
             System.out.println("");
         }
     }
     public void CheckAnt(){
-        for (int[] loop : grand.state) {
-            for (int j = 0; j<grand.state.length; j++) {
-                if (loop[j] < ANT) {
-                    System.out.print(0 + " ");
-                } else {
-                    System.out.print(ANT + " ");
-                }
+        for (int[] loop : grand.ant) {
+            for (int j = 0; j<grand.ant.length; j++) {
+                System.out.print(loop[j] + " ");
             }
             System.out.println("");
         }

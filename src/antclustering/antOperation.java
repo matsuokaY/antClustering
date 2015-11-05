@@ -44,12 +44,12 @@ public class antOperation {
     //***オブジェクトの持ち上げれるか***//
     public static boolean pickCheck(int an,int grand){
         // 蟻がオブジェクトを所持していない　かつ　場に蟻とオブジェクトが存在
-        return an==0&&grand>Field.ANT;
+        return an==0&&grand>0;
     }
     //***オブジェクトを降ろせるか***//
     public static boolean dropCheck(int an,int grand){
         //　蟻がオブジェクトを所持している　かつ　場にオブジェクトが存在しない
-        return an!=0&&grand==Field.ANT;
+        return an!=0&&grand==0;
     }
     
     public static boolean pick(ant an,ant clone,Grand grand,int i,int x,int y){
@@ -72,7 +72,7 @@ public class antOperation {
             grand.cloneState[y][x] = clone.Drop();
         }else
             clone.time ++;
-        if(Field.limitKeepTime<clone.time&&clone.around>0){
+        if(Field.limitKeepTime<clone.time&&an.around>0){
            //蟻がオブジェクトを下す
             grand.cloneState[y][x] = clone.Drop();
         }

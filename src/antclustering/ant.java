@@ -28,14 +28,14 @@ public class ant {
     }
      
     public void Pick(int x,int y,Grand grand){
-        this.State = grand.cloneState[y][x]-Field.ANT;
-        grand.cloneState[y][x] = Field.ANT;
+        this.State = grand.cloneState[y][x];
+        grand.cloneState[y][x] = 0;
     }
     public int Drop(){
         int result = this.State;
         this.State = 0;
         this.time = 0;
-        return result+Field.ANT;
+        return result;
     }
 
 }
