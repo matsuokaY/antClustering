@@ -33,6 +33,6 @@ public class AntClustering {
         System.out.println("\n/*********************************************/");
         field.NotAntCheck();
         System.out.println("\n/*********************************************/");
-        field.Check();
+    //    field.Check();
     }
 }

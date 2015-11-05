@@ -1,6 +1,7 @@
 
 package antclustering;
 
+import static antclustering.Field.ANT;
 import java.awt.Point;
 
 public class ant {
@@ -18,6 +19,7 @@ public class ant {
     public int around;
     public int time;
     
+    
     //***蟻の配置***//
     public void set(int x,int y,int z,int state){
         this.Location = new Point(x,y);
@@ -28,4 +30,16 @@ public class ant {
     public Point Location(){
         return Location;
     }
+    
+    public void Pick(int x,int y,Grand grand){
+        this.State = grand.cloneState[y][x]-Field.ANT;
+        grand.cloneState[y][x] = Field.ANT;
+    }
+    public int Drop(){
+        int result = this.State;
+        this.State = 0;
+        this.time = 0;
+        return result+Field.ANT;
+    }
+
 }

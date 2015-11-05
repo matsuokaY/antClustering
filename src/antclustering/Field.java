@@ -21,7 +21,6 @@ public class Field {
     static double Kpick = 2;
     static double Kdrop = 2;
     static int pickCount = 3;
-    static int pickCounts = 4;
     static int Range = 2;
     
 
@@ -59,7 +58,7 @@ public class Field {
         MAX_ant = ant;
         MAX_state = kind*2+1;
         ANT = kind +1;
-        grand.setting(ANT);
+        grand.setting(ANT,MAX_size);
         Iteration = iteration;
         limitMoveTime = limitmovetime;
         limitKeepTime = (int) (limitmovetime*1.5);
@@ -79,6 +78,8 @@ public class Field {
         for(int i = 0; i < MAX_ant; i++){
             ant[i] = new ant(); 
         }
+        
+        
         //配置
         while(object_size<MAX_object||ant_size<MAX_ant){
             object_x = rnd.nextInt(MAX_size);
@@ -102,9 +103,6 @@ public class Field {
 //**********************************************************************************************//
     //***クラスタリングの実行***//
     public void Clustering(){
-    /*    double  P=0,pa=0;
-        Random rnd2 = new Random();
-    */
         int x,y;
         //「Interation」の数だけ繰り返し
         for(int i=0;i<Iteration;i++){
@@ -116,148 +114,28 @@ public class Field {
             ant[] antClone = ant.clone();
             //すべての蟻で実行
             for(int an=0;an<MAX_ant;an++){
-//                pa = rnd2.nextDouble();
                 x = ant[an].Location.x;
                 y = ant[an].Location.y;
-                double F = Neight(an);
+                double F = grand.Neight(ant[an],Range);
                 //持ち上げられる状態か
-                if(pick(an)){
-                    Around8(an);
-                    if(pickObject(an,i)){
-                        //蟻がオブジェクトを持ち上げる
-                        antClone[an].State = grand.cloneState[y][x]-ANT;
-                        grand.cloneState[y][x] = ANT;
-                    }else
-                        antClone[an].time++;
-                }
+                if(antOperation.pick(ant[an],antClone[an],grand,i,x,y));
                 //降ろせる状態か
-                else if(drop(an)){                    
-                    Around8(an);
-                    if(dropObject(an,i)){
-                        //蟻がオブジェクトを下す
-                        grand.cloneState[y][x] = antClone[an].State+ANT;
-                        antClone[an].State = 0;
-                        antClone[an].time = 0;
-                    }else
-                        antClone[an].time ++;
-                    if(limitKeepTime<antClone[an].time&&antClone[an].around>0){
-                       //蟻がオブジェクトを下す
-                        grand.cloneState[y][x] = antClone[an].State+ANT;
-                        antClone[an].State = 0;
-                        antClone[an].time = 0;
-                    }
-                }
+                else if(antOperation.drop(ant[an],antClone[an],grand,i,x,y));
             }
             //state,antの更新
             ant = antClone;
             grand.resetState();
-
             //ランダム移動
             wander();
         }
         System.out.println("\r ");
     }
-//**********************************************************************************************//
-    //***周りがpickCount以下なら持ち上げる***//
-    public static boolean pickObject(int an,int iteration){
-        if(iteration<ThirdIteration)
-            return ant[an].around<=pickCount;
-        else if(iteration<HalfIteration)
-            return ant[an].around<=pickCount+1;
-        else
-            return ant[an].around<=pickCount+1;
-    }
-    //***周りがpickCount以上なら降ろす***//
-    public static boolean dropObject(int an,int iteration){
-        if(iteration<ThirdIteration)
-            return ant[an].around>=pickCount;
-        else if(iteration<HalfIteration)
-            return ant[an].around>=pickCount+1;
-        else
-            return ant[an].around>=pickCount+1;
-    }
-
-    //***オブジェクトの持ち上げれるか***//
-    public static boolean pick(int an){
-        // 蟻がオブジェクトを所持していない　かつ　場に蟻とオブジェクトが存在
-        return ant[an].State==0&&grand.state[ant[an].Location.y][ant[an].Location.x]>ANT;
-    }
-    //***オブジェクトを降ろせるか***//
-    public static boolean drop(int an){
-        //　蟻がオブジェクトを所持している　かつ　場にオブジェクトが存在しない
-        return ant[an].State!=0&&grand.state[ant[an].Location.y][ant[an].Location.x]==ANT;
-    }
-    
-    //***オブジェクトを持ち上げる確率***//
-    public static double P_pick(int an,double X,double F){
-        return (1-X)*Math.pow(Kpick/(Kpick+F), 2);
-    }
-    //***オブジェクトを下す確率***//
-    public static double P_drop(int an,double X,double F){
-        return X*Math.pow(Kdrop/(Kdrop+F),2);
-    }
 //**********************************************************************************************//    
-    //***周りとの類似度***//
-    public static double Neight(int an){
-        double result = 0,count=0,objectCount=0,anotherCount=0;
-        int X,Y,Xend,Yend,
-            x = ant[an].Location.x,
-            y = ant[an].Location.y;
-        int object = ant[an].State;
-        //蟻が保持しているオブジェクトが0(保持なし)ならその場に落ちているオブジェクトで判断する。
-        if(object ==0)
-            object = grand.state[y][x];
-        //蟻が認識する範囲(XからXendまで、YからYendまで)
-        X = Math.max(0,x-Range);
-        Xend = Math.min(x+Range,MAX_size);
-        Y = Math.max(0,y-Range);
-        Yend = Math.min(y+Range,MAX_size);
-        //同一オブジェクト同士の類似
-        for(int i =X ;i<Xend;i++)
-            for(int j = Y;j<Yend;j++){
-                //オブジェクトの一致
-                if(grand.state[j][i]>0
-                        //&&grand.state[j][i]<ANT
-                        ){
-                    objectCount++;
-                    if(!(i==x&&j==y)&&grand.state[j][i] == object||grand.state[j][i]-ANT == object)
-                        count++;
-                    
-                }                    
-            }
-        if(count==0)return 0;        
-        return count / objectCount;
-    }
-    //***周囲8マスの物体の数***//
-    public static void Around8(int an){
-        int x = ant[an].Location.x,
-            y = ant[an].Location.y,
-            X,Y,Xend,Yend,count=0,
-            object = ant[an].State,objectCount=0;
-        if(object == 0)return;
-        
-        //蟻が認識する範囲
-        X = Math.max(0,x-1);
-        Xend = Math.min(x+1,MAX_size-1);
-        Y = Math.max(0,y-1);
-        Yend = Math.min(y+1,MAX_size-1);
-        //同一オブジェクト同士の類似
-        for(int i =X ;i<=Xend;i++)
-            for(int j = Y;j<=Yend;j++){
-                //オブジェクトの一致
-                if(grand.checkObject(i,j,object))
-                    count++;
-                if(grand.state[j][i]>0&&grand.state[j][i]<ANT)
-                    objectCount++;
-            }
-        ant[an].around = count;
-    }
-//**********************************************************************************************//
     //***蟻の移動　ランダム***//
     public void wander(){   
         int oldx,oldy;
         //蟻すべてがランダムに移動
-        for(int an=0;an<MAX_ant;an++){
+        for(int an=0;an<(int)(MAX_ant);an++){
             //移動が完了するまで
             oldx = ant[an].Location.x;
             oldy = ant[an].Location.y;
@@ -267,6 +145,15 @@ public class Field {
                 Move2(an,oldx,oldy);
             }
         }
+/*        for(int an=(int) (MAX_ant*0.9);an<MAX_ant;an++){
+            oldx = ant[an].Location.x;
+            oldy = ant[an].Location.y;
+            if(ant[an].time < limitMoveTime){
+                Moves(an,oldx,oldy);
+            }else{
+                Moves(an,oldx,oldy);
+            }
+        }*/
     }
     //***ランダム移動　1マス***//
     public void Move(int an,int oldx,int oldy){
@@ -317,6 +204,30 @@ public class Field {
                     break;
                 }
             }
+    }
+    public void Moves(int an,int oldx,int oldy){
+        int k,x,y,count=0;
+        Random rnd = new Random();
+        while(count<30){
+            count++;
+            k = rnd.nextInt(movex.length);
+            x = oldx + movex[k];
+            y = oldy + movey[k];
+            //移動先が存在する　かつ　移動先に蟻がいない
+            if((x>0&&x<MAX_size)&&(y>0&&y<MAX_size)&&grand.state[y][x]<ANT){
+                //以前の位置から蟻を削除                   
+                grand.removeAnt(oldx,oldy);
+                //蟻の移動
+                ant[an].Location.x = x;
+                ant[an].Location.y = y;
+                ant[an].oldX = x;
+                ant[an].oldY = y;
+                //移動後の位置に蟻を追加
+                grand.setAnt(x, y);
+                //ループ強制抜け
+                break;
+            }
+        }        
     }
 //**********************************************************************************************//
     //***配置状態の表示(蟻有)***//
@@ -391,7 +302,15 @@ public class Field {
         
         return ("("+x+","+y+")") ;
     }
-    
+    //**********************************************************************************************//
+    //***オブジェクトを持ち上げる確率***//
+    public static double P_pick(int an,double X,double F){
+        return (1-X)*Math.pow(Kpick/(Kpick+F), 2);
+    }
+    //***オブジェクトを下す確率***//
+    public static double P_drop(int an,double X,double F){
+        return X*Math.pow(Kdrop/(Kdrop+F),2);
+    }
             
 }
     
