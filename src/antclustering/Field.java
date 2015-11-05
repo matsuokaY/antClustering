@@ -150,21 +150,20 @@ public class Field {
     //***蟻の移動　ランダム***//
     public void wander(){   
         //蟻すべてがランダムに移動
-        int an=0;
-        for(;an<(int)(MAX_ant*0.8);an++){
+        int an=0,result=antOperation.Punctuation(ant);
+/*        for(;an<(int)(MAX_ant*0.2);an++){
             //移動が完了するまで
+            if(ant[an].time < limitMoveTime){
+                Moves(ant[an],result);
+            }else{
+                Moves(ant[an],result);
+            }
+        }*/
+        for(;an<MAX_ant;an++){
             if(ant[an].time < limitMoveTime){
                 Move(ant[an]);
             }else{
                 Move2(ant[an]);
-            }
-        }
-        int result=antOperation.Punctuation(ant);
-        for(;an<MAX_ant;an++){
-            if(ant[an].time < limitMoveTime){
-                Moves(ant[an],result);
-            }else{
-                Moves(ant[an],result);
             }
         }
     }
@@ -249,12 +248,12 @@ public class Field {
         int object[]=new int[MAX_state+1];
         int object2[]=new int[ANT];
         for (int i=0;i<grand.state.length;i++) {
-            for (int j = 0; j<grand.state.length; j++) {
-                if(grand.ant[i][j]==0)
-                    System.out.print(grand.state[i][j] + " ");
-                else
-                    System.out.print((grand.state[i][j]+MAX_kind) + " ");
-                object[grand.state[i][j]]++;                    
+            for(int j=0;j<grand.state.length;j++){
+                System.out.print(grand.state[i][j] + " ");
+            }
+            System.out.print("        ");
+            for(int j=0;j<grand.state.length;j++){
+                System.out.print(grand.ant[i][j] + " ");
             }
             System.out.println("");
         }
@@ -323,7 +322,7 @@ public class Field {
         
         return ("("+x+","+y+")") ;
     }
-    //**********************************************************************************************//
+//**********************************************************************************************//
     //***オブジェクトを持ち上げる確率***//
     public static double P_pick(int an,double X,double F){
         return (1-X)*Math.pow(Kpick/(Kpick+F), 2);

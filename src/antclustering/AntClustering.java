@@ -11,7 +11,7 @@ public class AntClustering {
     static int size = 20;
     static int object = 200;
     static int kind =  3;
-    static int ant = 150;
+    static int ant = 300;
     static int iteration = 100000;
     static int limittime = 4;
     
@@ -30,10 +30,10 @@ public class AntClustering {
         System.out.println("\nクラスタリング開始");
         field.Clustering();
         System.out.println("クラスタリング終了");
-        System.out.println("\n/*********************************************/");
-        field.NotAntCheck();
-        System.out.println("\n/*********************************************/");
-        field.CheckAnt();
+//        System.out.println("\n/*********************************************/");
+//        field.NotAntCheck();
+//        System.out.println("\n/*********************************************/");
+//        field.CheckAnt();
         System.out.println("\n/*********************************************/");
         field.Check();
     }
