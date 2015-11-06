@@ -1,6 +1,8 @@
 
 package antclustering;
 
+import java.awt.Point;
+
 
 public class Grand {
     public int[][] state;
@@ -11,9 +13,9 @@ public class Grand {
     public void setState(int x,int y,int kind){
         this.state[y][x] = kind;
     }
-    public void resetAnt(ant an){
+    public void resetAnt(ant an,Point P){
         setAnt(an.Location.x,an.Location.y);
-        removeAnt(an.old.x,an.old.y);
+        removeAnt(P.x,P.y);
     }
     public void setAnt(int x,int y){
         this.ant[y][x] += 1;

@@ -13,6 +13,8 @@ class value{
 public class antOperation {
     static int pickCount = 3;
 
+    static final int R = 4;
+    static final int r = 1;
     //  乱数によって動かす方向を決定するための配列
     static final int[] movex = {-1, 0, 1,-1, 1,-1, 0, 1};
     static final int[] movey = {-1,-1,-1, 0, 0, 1, 1, 1};
@@ -29,7 +31,7 @@ public class antOperation {
             return an<=pickCount;
         //残り
         else
-            return an<=pickCount-1;
+            return an<=pickCount;
     }
     //***周りがpickCount以上なら降ろす***//
     public static boolean dropObject(int an,int iteration){
@@ -38,7 +40,7 @@ public class antOperation {
         else if(iteration<Field.ThirdIteration*2)
             return an>=pickCount;
         else
-            return an>=pickCount-1;
+            return an>=pickCount;
     }
 
     //***オブジェクトの持ち上げれるか***//
@@ -79,7 +81,8 @@ public class antOperation {
         return true;
     }
     
-    //**********************************************************************************************//    
+    //**********************************************************************************************//
+    //蟻が集中している区画の探索
     public static int Punctuation(ant[] ant){
         int[] result = {0,0,0,0};
         for(int i=0;i<ant.length;i++){
@@ -97,5 +100,42 @@ public class antOperation {
             if(result[max]<result[j])
                 max=j;
         return max;
+    }
+    //周辺n*nから蟻が多い方向(8方向)を見つける  n=R*2+1 R-rの範囲
+    public static int Around(ant ant,int[][] A){
+        int x = ant.Location.x,
+            y = ant.Location.y,X,Y,Xend,Yend,result=0;
+        int[] k = new int[8];
+        //蟻が認識する範囲
+        X = Math.max(0,x-R);
+        Xend = Math.min(x+R,Field.MAX_size-1);
+        Y = Math.max(0,y-R);
+        Yend = Math.min(y+R,Field.MAX_size-1);
+        //同一オブジェクト同士の類似
+        for(int i=X;i<Xend;i++){
+            for(int j=Y;j<Yend;j++){
+                if(i<x-r&&j<y-r&&0<A[j][i])
+                        k[0] += A[j][i];
+                else if(i<x+r&&j<y-r&&0<A[j][i])
+                    k[1] += A[j][i];
+                else if(i<Xend&&j<y-r&&0<A[j][i])
+                    k[2] += A[j][i];
+                else if(i<x-r&&j<y+r&&0<A[j][i])
+                    k[3] += A[j][i];
+                else if(i<Xend&&j<y+r&&0<A[j][i])
+                    k[4] += A[j][i];
+                else if(i<x-r&&j<Yend&&0<A[j][i])
+                    k[5] += A[j][i];
+                else if(i<x+r&&j<Yend&&0<A[j][i])
+                    k[6] += A[j][i];
+                else if(i<Xend&&j<Yend)
+                    k[7] += A[j][i];
+            }
+        }
+        for(int i=1;i<k.length-1;i++)
+            if(k[result]<k[i])
+                result = i;
+        return result;
+        
     }
 }

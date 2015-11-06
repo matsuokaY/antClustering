@@ -37,5 +37,11 @@ public class ant {
         this.time = 0;
         return result;
     }
-
+    
+    public void Move(int x,int y){
+        this.Location.x = x;
+        this.Location.y = y;
+        this.old.x = x;
+        this.old.y = y;
+    }
 }

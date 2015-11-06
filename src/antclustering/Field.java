@@ -151,14 +151,14 @@ public class Field {
     public void wander(){   
         //蟻すべてがランダムに移動
         int an=0,result=antOperation.Punctuation(ant);
-/*        for(;an<(int)(MAX_ant*0.2);an++){
+        for(;an<(int)(MAX_ant*0.2);an++){
             //移動が完了するまで
             if(ant[an].time < limitMoveTime){
                 Moves(ant[an],result);
             }else{
                 Moves(ant[an],result);
             }
-        }*/
+        }
         for(;an<MAX_ant;an++){
             if(ant[an].time < limitMoveTime){
                 Move(ant[an]);
@@ -180,12 +180,10 @@ public class Field {
             if((x>0&&x<MAX_size)&&(y>0&&y<MAX_size)&&grand.state[y][x]<ANT){
                 //以前の位置から蟻を削除                   
                 //蟻の移動
-                an.Location.x = x;
-                an.Location.y = y;
+                Point P  = an.old;
+                an.Move(x, y);
                 //移動後の位置に蟻を追加
-                grand.resetAnt(an);
-                an.old.x = x;
-                an.old.y = y;
+                grand.resetAnt(an,P);
                 //ループ強制抜け
                 break;
             }
@@ -204,12 +202,10 @@ public class Field {
                 if((x>0&&x<MAX_size)&&(y>0&&y<MAX_size)&&grand.state[y][x]<ANT){
                     //以前の位置から蟻を削除                   
                     //蟻の移動
-                    an.Location.x = x;
-                    an.Location.y = y;
+                    Point P  = an.old;
+                    an.Move(x, y);
                     //移動後の位置に蟻を追加
-                    grand.resetAnt(an);
-                    an.old.x = x;
-                    an.old.y = y;
+                    grand.resetAnt(an,P);
                     //ループ強制抜け
                     break;
                 }
@@ -220,23 +216,22 @@ public class Field {
         Random rnd = new Random();
         while(count<30){
             count++;
+            int Q = antOperation.Around(an, grand.ant);
             while(true){
                 k = rnd.nextInt(movex.length);
                 x = an.old.x + movex[k];
                 y = an.old.y + movey[k];
-                if(EuclideanLenght(S[i].x,S[i].y,x,y)-EuclideanLenght(S[i].x,S[i].y,an.old.x,an.old.y)>0)
+                if(Q!=k)
                     break;
             }
             //移動先が存在する　かつ　移動先に蟻がいない
             if((x>0&&x<MAX_size)&&(y>0&&y<MAX_size)&&grand.state[y][x]<ANT){
                 //以前の位置から蟻を削除                   
                 //蟻の移動
-                an.Location.x = x;
-                an.Location.y = y;
+                Point P  = an.old;
+                an.Move(x, y);
                 //移動後の位置に蟻を追加
-                grand.resetAnt(an);
-                an.old.x = x;
-                an.old.y = y;
+                grand.resetAnt(an,P);
                 //ループ強制抜け
                 break;
             }
@@ -245,11 +240,13 @@ public class Field {
 //**********************************************************************************************//
     //***配置状態の表示(蟻有)***//
     public void Check(){    
-        int object[]=new int[MAX_state+1];
+        int object[]=new int[MAX_kind+1];
         int object2[]=new int[ANT];
         for (int i=0;i<grand.state.length;i++) {
             for(int j=0;j<grand.state.length;j++){
                 System.out.print(grand.state[i][j] + " ");
+                if(grand.state[i][j]!=0)
+                    object[grand.state[i][j]]++;
             }
             System.out.print("        ");
             for(int j=0;j<grand.state.length;j++){
@@ -265,12 +262,7 @@ public class Field {
             }
         }
         for(int b=1;b<object.length;b++)
-            if(b<=MAX_kind)
-                System.out.println("object "+b+" = "+object[b]);
-            else if(b==MAX_kind+1)
-                System.out.println("ant = "+object[b]);
-            else
-                System.out.println("object "+(b-MAX_kind-1)+" &ant = "+object[b]);
+            System.out.println("object "+b+" = "+object[b]);
         for(int b=0;b<=MAX_kind;b++)
             if(object2[b]!=0)
                 System.out.println(b+" objectを持つあり = "+object2[b]);
@@ -301,13 +293,13 @@ public class Field {
                 System.out.print("--------------------"+i+"--------------------");
             }
             else if(Iteration>=1000000&&i==0){
-                System.out.println("\r");
+                System.out.print("\r");
                 System.out.print("--------------------"+i+"--------------------");
             }else if(i%limitCount==0){
                 System.out.print("\r");
                 System.out.print("--------------------"+i+"--------------------");
             }else if(i==(limitCount-1)){
-                System.out.println("\r");
+                System.out.print("\r");
             }
     }
 //**********************************************************************************************//    
