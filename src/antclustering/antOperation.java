@@ -138,4 +138,31 @@ public class antOperation {
         return result;
         
     }
+    //運ぶ時に向かうべきでない方向を見つける
+    public static int CarryAround(ant ant,double[][] A){
+        int result=0,x=0,y=0;
+        double v=0;
+        for(int i=0;i<A.length;i++){
+            for(int j=0;j<A[i].length;j++){
+                if(v<A[i][j]){
+                    x=i;y=j;
+                    v=A[i][j];
+                }
+            }
+        }
+        /***********/
+        /* 0  1  2 */
+        /* 3  a  4 */
+        /* 5  6  7 */
+        /***********/
+        if(ant.Location.x<x&&ant.Location.y<y)
+            result = 7;
+        else if(ant.Location.x<x&&ant.Location.y>y)
+            result = 5;
+        else if(ant.Location.x>x&&ant.Location.y<y)
+            result = 2;
+        else if(ant.Location.x<x&&ant.Location.y>y)
+            result = 0;
+        return result;
+    }
 }

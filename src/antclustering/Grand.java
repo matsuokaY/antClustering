@@ -5,8 +5,14 @@ import java.awt.Point;
 
 
 public class Grand {
+    //蟻のフェロモン濃度
+    public final double p = 1;
+    //フェロモンの蒸発率
+    public final double lostP = 0.9;
+    public static final double p_max = 10;
+    
     public int[][] state;
-    public int[][][] pheromone;
+    public double[][][] pheromone;
     public int[][] cloneState;
     public int[][] ant;
    
@@ -32,6 +38,31 @@ public class Grand {
     public boolean checkObject(int x,int y,int object){
         return state[y][x] == object;
     }
+    //**********************************************************************************************//
+    //***フェロモンの散布***//
+    public void setPheromone(ant[] ant){
+        int state=0;
+        for(int i=0;i<ant.length;i++){
+            state = ant[i].State;
+            if(state==0)
+                state = this.state[ant[i].Location.y][ant[i].Location.x];
+            if(state!=0&&this.pheromone[state][ant[i].Location.y][ant[i].Location.x]<p_max){
+                this.pheromone[state][ant[i].Location.y][ant[i].Location.x] += p;
+            }
+        }
+    }
+    //***フェロモンの蒸発***//
+    public void lostP(){
+        for(int i=0;i<pheromone[0].length;i++){
+            for(int j=0;j<pheromone[0][i].length;j++){
+                for(int k=0;k<pheromone.length;k++){
+                    if(this.pheromone[k][i][j]!=0)
+                        this.pheromone[k][i][j] *= lostP;
+                }
+            }
+        }
+    }
+    //**********************************************************************************************//
     //***周りとの類似度***//
     public double Neight(ant ant,int Range){
         double count=0,objectCount=0;
