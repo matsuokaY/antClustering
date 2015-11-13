@@ -3,6 +3,7 @@ package antclustering;
 import java.util.Random;
 import antclustering.Grand;
 import antclustering.ant;
+import antclustering.antOperation.C;
 import java.awt.Point;
 
 /*******
@@ -90,6 +91,7 @@ public class Field {
         grand.state = new int[MAX_size][MAX_size];
         grand.ant = new int[MAX_size][MAX_size];
         grand.pheromone = new double[MAX_kind+1][MAX_size][MAX_size];
+        grand.C = new C[MAX_kind];
         ant = new ant[MAX_ant];
         int object_x,object_y,object_kind,ant_size=0,object_size=0;
         //蟻の作成
@@ -164,6 +166,7 @@ public class Field {
                 Moves2(ant[an]);
             }
         }
+        grand.C = antOperation.PAround(grand.pheromone);
         for(;an<MAX_ant;an++){
             if(ant[an].State!=0&&i>HalfIteration){
                 Carry(ant[an]);
@@ -266,7 +269,7 @@ public class Field {
     public void Carry(ant an){
         int k,x,y,count=0;
         Random rnd = new Random();
-        int Q = antOperation.CarryAround(an, grand.pheromone[an.State]);
+        int Q = antOperation.CarryAround(an, grand.C);
         while(count<30){
             count++;
             k = rnd.nextInt(M.move_x[Q].length);

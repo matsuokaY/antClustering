@@ -10,7 +10,7 @@ package antclustering;
 public class AntClustering {
     static int size = 20;
     static int object = 200;
-    static int kind =  1;
+    static int kind =  3;
     static int ant = 800;
     static int iteration = 100000;
     static int limittime = 4;

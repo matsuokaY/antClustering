@@ -1,6 +1,7 @@
 
 package antclustering;
 
+import antclustering.antOperation.C;
 import java.awt.Point;
 
 
@@ -15,6 +16,8 @@ public class Grand {
     public double[][][] pheromone;
     public int[][] cloneState;
     public int[][] ant;
+    
+    public C[] C;
    
     public void setState(int x,int y,int kind){
         this.state[y][x] = kind;

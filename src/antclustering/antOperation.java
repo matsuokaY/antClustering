@@ -138,30 +138,40 @@ public class antOperation {
         return result;
         
     }
-    //運ぶ時に向かうべきでない方向を見つける
-    public static int CarryAround(ant ant,double[][] A){
-        int result=0,x=0,y=0;
-        double v=0;
-        for(int i=0;i<A.length;i++){
-            for(int j=0;j<A[i].length;j++){
-                if(v<A[i][j]){
-                    x=i;y=j;
-                    v=A[i][j];
+    public static class C {
+        int x,y;
+        double value;
+    }
+    public static C[] PAround(double[][][] A){
+        C result[] = new C[Field.MAX_kind];
+        for(int k=0;k<result.length;k++){
+            result[k].value=0;
+            for(int i=0;i<A.length;i++){
+                for(int j=0;j<A[i].length;j++){
+                    if(result[k].value<A[k][i][j]){
+                        result[k].x=i;result[k].y=j;
+                        result[k].value=A[k][i][j];
+                    }
                 }
             }
         }
+        return result;
+    }
+    //運ぶ時に向かうべきでない方向を見つける
+    public static int CarryAround(ant ant,C[] C){
         /***********/
         /* 0  1  2 */
         /* 3  a  4 */
         /* 5  6  7 */
         /***********/
-        if(ant.Location.x<x&&ant.Location.y<y)
+        int result=0;
+        if(ant.Location.x<C[ant.State].x&&ant.Location.y<C[ant.State].y)
             result = 7;
-        else if(ant.Location.x<x&&ant.Location.y>y)
-            result = 5;
-        else if(ant.Location.x>x&&ant.Location.y<y)
+        else if(ant.Location.x<C[ant.State].x&&ant.Location.y>C[ant.State].y)
             result = 2;
-        else if(ant.Location.x<x&&ant.Location.y>y)
+        else if(ant.Location.x>C[ant.State].x&&ant.Location.y<C[ant.State].y)
+            result = 5;
+        else if(ant.Location.x>C[ant.State].x&&ant.Location.y>C[ant.State].y)
             result = 0;
         return result;
     }
