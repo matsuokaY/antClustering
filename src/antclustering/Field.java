@@ -157,7 +157,6 @@ public class Field {
     public void wander(int i){   
         //蟻すべてがランダムに移動
         int an=0;
-//        int result=antOperation.Punctuation(ant);
         for(;an<(int)(MAX_ant*0.2);an++){
             //移動が完了するまで
             if(ant[an].time < limitMoveTime){
@@ -166,7 +165,7 @@ public class Field {
                 Moves2(ant[an]);
             }
         }
-        grand.C = antOperation.PAround(grand.pheromone);
+//        grand.C=antOperation.PAround(grand.pheromone);
         for(;an<MAX_ant;an++){
             if(ant[an].State!=0&&i>HalfIteration){
                 Carry(ant[an]);
@@ -186,8 +185,8 @@ public class Field {
             k = rnd.nextInt(movex.length);
             x = an.old.x + M.move_x[8][k];
             y = an.old.y + M.move_y[8][k];
-            //移動先が存在する　かつ　移動先に蟻がいない
-            if((x>0&&x<MAX_size)&&(y>0&&y<MAX_size)&&grand.state[y][x]<ANT){
+            //移動先が存在する
+            if((x>0&&x<MAX_size)&&(y>0&&y<MAX_size)){
                 //以前の位置から蟻を削除                   
                 //蟻の移動
                 Point P  = an.old;
@@ -208,8 +207,8 @@ public class Field {
                 k = rnd.nextInt(moveX.length);
                 x = an.old.x + moveX[k];
                 y = an.old.y + moveY[k];
-                //移動先が存在する　かつ　移動先に蟻がいない
-                if((x>0&&x<MAX_size)&&(y>0&&y<MAX_size)&&grand.state[y][x]<ANT){
+                //移動先が存在する
+                if((x>0&&x<MAX_size)&&(y>0&&y<MAX_size)){
                     //以前の位置から蟻を削除                   
                     //蟻の移動
                     Point P  = an.old;
@@ -221,17 +220,19 @@ public class Field {
                 }
             }
     }
+    
     public void Moves(ant an){
         int k,x,y,count=0;
         Random rnd = new Random();
         while(count<30){
             count++;
-            int Q = antOperation.Around(an, grand.ant);
-            k = rnd.nextInt(M.move_x[Q].length);
-            x = an.old.x + M.move_x[Q][k];
-            y = an.old.y + M.move_y[Q][k];
-            //移動先が存在する　かつ　移動先に蟻がいない
-            if((x>0&&x<MAX_size)&&(y>0&&y<MAX_size)){
+//            int Q = antOperation.Around(an, grand.ant);
+            int[] Q = antOperation.RandomQ(an, grand.ant,1);
+            k = Q[rnd.nextInt(Q.length)];
+            x = an.old.x + M.move_x[8][k];
+            y = an.old.y + M.move_y[8][k];
+            //移動先が存在する
+            if((x>0&&x<MAX_size)&&(y>0&&y<MAX_size)&&grand.ant[y][x]==0){
                 //以前の位置から蟻を削除                   
                 //蟻の移動
                 Point P  = an.old;
@@ -248,11 +249,13 @@ public class Field {
         Random rnd = new Random();
         while(count<30){
             count++;
-            int Q = antOperation.Around(an, grand.ant);
-            k = rnd.nextInt(M.move_X[Q].length);
-            x = an.old.x + M.move_X[Q][k];
-            y = an.old.y + M.move_Y[Q][k];
-            //移動先が存在する　かつ　移動先に蟻がいない
+//            int Q = antOperation.Around(an, grand.ant);
+            int[] Q = antOperation.RandomQ(an, grand.ant,2);
+//            k = rnd.nextInt(M.move_X[Q].length);
+            k= Q[rnd.nextInt(Q.length)];
+            x = an.old.x + M.move_X[8][k];
+            y = an.old.y + M.move_Y[8][k];
+            //移動先が存在する
             if((x>0&&x<MAX_size)&&(y>0&&y<MAX_size)){
                 //以前の位置から蟻を削除                   
                 //蟻の移動
@@ -275,8 +278,8 @@ public class Field {
             k = rnd.nextInt(M.move_x[Q].length);
             x = an.old.x + M.move_x[Q][k];
             y = an.old.y + M.move_y[Q][k];
-            //移動先が存在する　かつ　移動先に蟻がいない
-            if((x>0&&x<MAX_size)&&(y>0&&y<MAX_size)&&grand.state[y][x]<ANT){
+            //移動先が存在する
+            if((x>0&&x<MAX_size)&&(y>0&&y<MAX_size)){
                 //以前の位置から蟻を削除                   
                 //蟻の移動
                 Point P  = an.old;
@@ -305,7 +308,7 @@ public class Field {
             }
             System.out.print("        ");
             for(int j=0;j<grand.state.length;j++){
-                if(grand.pheromone[1][i][j]>(Grand.p_max/2))
+                if(grand.pheromone[1][i][j]>(Grand.p_max/10))
                     System.out.print("1 ");
                 else
                     System.out.print("0 ");
@@ -341,7 +344,20 @@ public class Field {
                 System.out.print(loop[j] + " ");
             }
             System.out.println("");
+        }       
+    }
+    public void CheckAnt2(){
+        int[][] A = new int[MAX_size][MAX_size];
+        for(int k=0;k<(int)(MAX_ant*0.2);k++){
+            A[ant[k].Location.y][ant[k].Location.x]++;
         }
+        for (int i=0;i<grand.state.length;i++) {
+            for(int j=0;j<grand.state.length;j++){
+                System.out.print(A[j][i]+" ");
+            }
+            System.out.println();
+        }
+        
     }
     //***表示***//
     public void Print(int i){

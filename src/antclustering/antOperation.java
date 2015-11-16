@@ -2,6 +2,7 @@
 package antclustering;
 
 import static antclustering.Field.ANT;
+import java.util.ArrayList;
 import java.util.Random;
 
 
@@ -57,7 +58,7 @@ public class antOperation {
     public static boolean pick(ant an,ant clone,Grand grand,int i,int x,int y){
         if(!pickCheck(an.State,grand.state[y][x]))
             return false;
-        an.around=grand.Around8(an);
+        an.around=grand.AroundR(an,1);
         if(pickObject(an.around,i)){
             //蟻がオブジェクトを持ち上げる
             clone.Pick(x,y,grand);
@@ -68,7 +69,7 @@ public class antOperation {
     public static boolean drop(ant an,ant clone,Grand grand,int i,int x,int y){
         if(!dropCheck(an.State,grand.state[y][x]))
             return false;
-        an.around=grand.Around8(an);
+        an.around=grand.AroundR(an,1);
         if(dropObject(an.around,i)){
             //蟻がオブジェクトを下す
             grand.cloneState[y][x] = clone.Drop();
@@ -82,25 +83,6 @@ public class antOperation {
     }
     
     //**********************************************************************************************//
-    //蟻が集中している区画の探索
-    public static int Punctuation(ant[] ant){
-        int[] result = {0,0,0,0};
-        for(int i=0;i<ant.length;i++){
-            if(ant[i].Location.x<=Field.MAX_size/2&&ant[i].Location.y<=Field.MAX_size/2)
-                result[0]++;
-            else if(ant[i].Location.x<=Field.MAX_size/2&&Field.MAX_size/2<ant[i].Location.y)
-                result[1]++;
-            else if(Field.MAX_size/2<ant[i].Location.x&&ant[i].Location.y<=Field.MAX_size/2)
-                result[2]++;
-            else if(Field.MAX_size/2<ant[i].Location.x&&Field.MAX_size/2<ant[i].Location.y)
-                result[3]++;
-        }
-        int max=0;
-        for(int j=1;j<result.length;j++)
-            if(result[max]<result[j])
-                max=j;
-        return max;
-    }
     //周辺n*nから蟻が多い方向(8方向)を見つける  n=R*2+1 R-rの範囲
     public static int Around(ant ant,int[][] A){
         int x = ant.Location.x,
@@ -173,6 +155,37 @@ public class antOperation {
             result = 5;
         else if(ant.Location.x>C[ant.State].x&&ant.Location.y>C[ant.State].y)
             result = 0;
+        return result;
+    }
+    
+    public static int[] RandomQ(ant ant,int[][] A,int R){
+        int[] value = new int[4*R*R+4*R];
+        int x=ant.Location.x,y=ant.Location.y,count=0;
+        ArrayList<Integer> List=new ArrayList<Integer>();
+        for(int j=y-R;j<y+R;j++){
+            for(int i=x-R;i<x+R;i++){
+                if(j!=y||i!=x){
+                    if(i>0&&i<Field.MAX_size+1&&j>0&&j<Field.MAX_size+1)
+                        value[count] = A[j][i];
+                    else
+                        value[count] = -1;
+                    count++;
+                }
+            }
+        }
+        count=0;
+        for(int k=0;k<value.length;k++)
+            if(value[k]==0){
+                List.add(k);
+                count++;
+            }
+        if(count ==0)
+            System.out.println("test");
+        int[] result =new int[count+1];
+        for(int l=0;l<count;l++){
+            result[l] = List.get(l);
+        //    System.out.println(List.get(l));
+        }
         return result;
     }
 }

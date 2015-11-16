@@ -45,14 +45,16 @@ public class Grand {
     //***フェロモンの散布***//
     public void setPheromone(ant[] ant){
         int state=0;
+        int R = 3;
         for(int i=0;i<ant.length;i++){
-            state = ant[i].State;
-            if(state==0)
-                state = this.state[ant[i].Location.y][ant[i].Location.x];
+            state = this.state[ant[i].Location.y][ant[i].Location.x];
             if(state!=0&&this.pheromone[state][ant[i].Location.y][ant[i].Location.x]<p_max){
-                this.pheromone[state][ant[i].Location.y][ant[i].Location.x] += p;
+                this.pheromone[state][ant[i].Location.y][ant[i].Location.x] += p/D(ant[i] , R);
             }
         }
+    }
+    public int D(ant ant,int R){
+        return (R*2+1)*(R*2+1)-1-AroundR(ant,R);
     }
     //***フェロモンの蒸発***//
     public void lostP(){
@@ -97,8 +99,8 @@ public class Grand {
         if(count==0)return 0;        
         return count / objectCount;
     }
-    //***周囲8マスの物体の数***//
-    public int Around8(ant ant){
+    //***周囲(半径R)の物体の数***//
+    public int AroundR(ant ant,int R){
         int x = ant.Location.x,
             y = ant.Location.y,
             X,Y,Xend,Yend,count=0,
@@ -108,10 +110,10 @@ public class Grand {
         }
         
         //蟻が認識する範囲
-        X = Math.max(0,x-1);
-        Xend = Math.min(x+1,Field.MAX_size-1);
-        Y = Math.max(0,y-1);
-        Yend = Math.min(y+1,Field.MAX_size-1);
+        X = Math.max(0,x-R);
+        Xend = Math.min(x+R,Field.MAX_size-1);
+        Y = Math.max(0,y-R);
+        Yend = Math.min(y+R,Field.MAX_size-1);
         //同一オブジェクト同士の類似
         for(int i =X ;i<=Xend;i++)
             for(int j = Y;j<=Yend;j++){
