@@ -3,7 +3,7 @@ package antclustering;
 import java.util.Random;
 import antclustering.Grand;
 import antclustering.ant;
-import antclustering.antOperation.C;
+import antclustering.C;
 import java.awt.Point;
 
 /*******
@@ -165,7 +165,7 @@ public class Field {
                 Moves2(ant[an]);
             }
         }
-//        grand.C=antOperation.PAround(grand.pheromone);
+        grand.C=antOperation.PAround(grand.pheromone);
         for(;an<MAX_ant;an++){
             if(ant[an].State!=0&&i>HalfIteration){
                 Carry(ant[an]);
@@ -182,7 +182,7 @@ public class Field {
         Random rnd = new Random();
         while(count<30){
             count++;
-            k = rnd.nextInt(movex.length);
+            k = rnd.nextInt(M.move_x[8].length);
             x = an.old.x + M.move_x[8][k];
             y = an.old.y + M.move_y[8][k];
             //移動先が存在する
@@ -228,7 +228,10 @@ public class Field {
             count++;
 //            int Q = antOperation.Around(an, grand.ant);
             int[] Q = antOperation.RandomQ(an, grand.ant,1);
-            k = Q[rnd.nextInt(Q.length)];
+            if(Q.length!=0)
+                k = Q[rnd.nextInt(Q.length)];
+            else
+                k = rnd.nextInt(M.move_x[8].length);
             x = an.old.x + M.move_x[8][k];
             y = an.old.y + M.move_y[8][k];
             //移動先が存在する
@@ -296,26 +299,32 @@ public class Field {
     public void Check(){    
         int object[]=new int[MAX_kind+1];
         int object2[]=new int[ANT];
+        int[][] A = new int[MAX_size][MAX_size];
+        for(int k=0;k<(int)(MAX_ant*0.2);k++){
+            A[ant[k].Location.y][ant[k].Location.x]++;
+        }
         for (int i=0;i<grand.state.length;i++) {
+            //要素の様子
             for(int j=0;j<grand.state.length;j++){
                 System.out.print(grand.state[i][j] + " ");
                 if(grand.state[i][j]!=0)
                     object[grand.state[i][j]]++;
             }
             System.out.print("        ");
+            //蟻の様子
             for(int j=0;j<grand.state.length;j++){
                 System.out.print(grand.ant[i][j] + " ");
             }
             System.out.print("        ");
+            //エージェント蟻の様子
             for(int j=0;j<grand.state.length;j++){
-                if(grand.pheromone[1][i][j]>(Grand.p_max/10))
-                    System.out.print("1 ");
-                else
-                    System.out.print("0 ");
-//                System.out.print(grand.pheromone[1][i][j] + " ");
+                System.out.print(A[j][i]+" ");
             }
+            
             System.out.println("");
         }
+        System.out.println("");
+        CheckP();
         //オブジェクトを持ち上げている蟻の表示
         for(int an=0;an<MAX_ant;an++){
             if(ant[an].State!=0){
@@ -358,6 +367,18 @@ public class Field {
             System.out.println();
         }
         
+    }
+    public void CheckP(){
+        for(int i=0;i<grand.state.length;i++){
+            for(int k=1;k<=MAX_kind;k++){
+                for(int j=0;j<grand.state.length;j++){
+                    int word = (int) (grand.pheromone[k][i][j]);
+                    System.out.print(word + " ");
+                }
+                System.out.print("        ");
+            }
+            System.out.println();
+        }
     }
     //***表示***//
     public void Print(int i){

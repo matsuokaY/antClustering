@@ -1,9 +1,7 @@
 
 package antclustering;
 
-import static antclustering.Field.ANT;
 import java.util.ArrayList;
-import java.util.Random;
 
 
 class value{
@@ -83,6 +81,25 @@ public class antOperation {
     }
     
     //**********************************************************************************************//
+    //周りにある要素の中から最も多い要素を返す。
+    public static int AroundState(ant ant, int[][] A){
+        int x = ant.Location.x,y = ant.Location.y,X,Y,Xend,Yend,result=0;
+        //蟻が認識する範囲
+        X = Math.max(0,x-r);
+        Xend = Math.min(x+r,Field.MAX_size-1);
+        Y = Math.max(0,y-r);
+        Yend = Math.min(y+r,Field.MAX_size-1);
+        int[] state = new int[Field.MAX_kind+1];
+        for(int i=X;i<Xend;i++){
+            for(int j=Y;j<Yend;j++){
+                state[A[j][i]]++;
+            }
+        }
+        for(int i=1;i<state.length;i++)
+            if(state[i]>state[result])
+                result = i;
+        return result;
+    }
     //周辺n*nから蟻が多い方向(8方向)を見つける  n=R*2+1 R-rの範囲
     public static int Around(ant ant,int[][] A){
         int x = ant.Location.x,
@@ -120,19 +137,17 @@ public class antOperation {
         return result;
         
     }
-    public static class C {
-        int x,y;
-        double value;
-    }
+    //各フェロモンの最も高い濃度のところをの値と位置を返す
     public static C[] PAround(double[][][] A){
         C result[] = new C[Field.MAX_kind];
         for(int k=0;k<result.length;k++){
-            result[k].value=0;
-            for(int i=0;i<A.length;i++){
-                for(int j=0;j<A[i].length;j++){
-                    if(result[k].value<A[k][i][j]){
-                        result[k].x=i;result[k].y=j;
-                        result[k].value=A[k][i][j];
+            result[k] = new C();
+            for(int i=0;i<A[k].length;i++){
+                for(int j=0;j<A[k][i].length;j++){
+                    if(result[k].value<A[k+1][i][j]){
+                        result[k].value=A[k+1][i][j];
+                        result[k].x = i;
+                        result[k].y = j;
                     }
                 }
             }
@@ -157,21 +172,22 @@ public class antOperation {
             result = 0;
         return result;
     }
-    
-    public static int[] RandomQ(ant ant,int[][] A,int R){
-        int[] value = new int[4*R*R+4*R];
+    //進むべき方向の選択肢決め
+    public static int[] RandomQ(ant ant,int[][] A,int Re){
+        int[] value = new int[4*Re*Re+4*Re];
         int x=ant.Location.x,y=ant.Location.y,count=0;
-        ArrayList<Integer> List=new ArrayList<Integer>();
-        for(int j=y-R;j<y+R;j++){
-            for(int i=x-R;i<x+R;i++){
-                if(j!=y||i!=x){
-                    if(i>0&&i<Field.MAX_size+1&&j>0&&j<Field.MAX_size+1)
-                        value[count] = A[j][i];
-                    else
-                        value[count] = -1;
-                    count++;
+        ArrayList<Integer> List=new ArrayList<>();
+        for(int j=y-Re;j<y+Re;j++){
+            if(j!=y)
+                for(int i=x-Re;i<x+Re;i++){
+                    if(i!=x){
+                        if(i>0&&i<Field.MAX_size&&j>0&&j<Field.MAX_size)
+                            value[count] = A[j][i];
+                        else
+                            value[count] = -1;
+                        count++;
+                    }
                 }
-            }
         }
         count=0;
         for(int k=0;k<value.length;k++)
@@ -179,12 +195,11 @@ public class antOperation {
                 List.add(k);
                 count++;
             }
-        if(count ==0)
-            System.out.println("test");
         int[] result =new int[count+1];
+        if(count == 0)
+            return result;
         for(int l=0;l<count;l++){
             result[l] = List.get(l);
-        //    System.out.println(List.get(l));
         }
         return result;
     }

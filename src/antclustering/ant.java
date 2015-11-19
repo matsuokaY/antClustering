@@ -1,7 +1,6 @@
 
 package antclustering;
 
-import static antclustering.Field.ANT;
 import java.awt.Point;
 
 public class ant {

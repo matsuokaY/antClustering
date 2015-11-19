@@ -1,7 +1,6 @@
 
 package antclustering;
 
-import antclustering.antOperation.C;
 import java.awt.Point;
 
 
@@ -47,9 +46,11 @@ public class Grand {
         int state=0;
         int R = 3;
         for(int i=0;i<ant.length;i++){
-            state = this.state[ant[i].Location.y][ant[i].Location.x];
+//            state = this.state[ant[i].Location.y][ant[i].Location.x];
+            state = antOperation.AroundState(ant[i],this.state);
             if(state!=0&&this.pheromone[state][ant[i].Location.y][ant[i].Location.x]<p_max){
-                this.pheromone[state][ant[i].Location.y][ant[i].Location.x] += p/D(ant[i] , R);
+//                this.pheromone[state][ant[i].Location.y][ant[i].Location.x] += p/D(ant[i] , R);
+                this.pheromone[state][ant[i].Location.y][ant[i].Location.x] += p;
             }
         }
     }

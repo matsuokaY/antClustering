@@ -33,6 +33,5 @@ public class AntClustering {
         System.out.println("クラスタリング終了");
         System.out.println("\n/****************************************************************************/");
         field.Check();
-        field.CheckAnt2();
     }
 }
