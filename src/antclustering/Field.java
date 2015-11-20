@@ -186,16 +186,8 @@ public class Field {
             x = an.old.x + M.move_x[8][k];
             y = an.old.y + M.move_y[8][k];
             //移動先が存在する
-            if((x>0&&x<MAX_size)&&(y>0&&y<MAX_size)){
-                //以前の位置から蟻を削除                   
-                //蟻の移動
-                Point P  = an.old;
-                an.Move(x, y);
-                //移動後の位置に蟻を追加
-                grand.resetAnt(an,P);
-                //ループ強制抜け
+            if(grand.MovingANT(x, y, an))
                 break;
-            }
         }        
     }
     //***ランダム移動　2マス***//
@@ -207,17 +199,8 @@ public class Field {
                 k = rnd.nextInt(moveX.length);
                 x = an.old.x + moveX[k];
                 y = an.old.y + moveY[k];
-                //移動先が存在する
-                if((x>0&&x<MAX_size)&&(y>0&&y<MAX_size)){
-                    //以前の位置から蟻を削除                   
-                    //蟻の移動
-                    Point P  = an.old;
-                    an.Move(x, y);
-                    //移動後の位置に蟻を追加
-                    grand.resetAnt(an,P);
-                    //ループ強制抜け
+                if(grand.MovingANT(x, y, an))
                     break;
-                }
             }
     }
     
@@ -230,45 +213,40 @@ public class Field {
             count++;
             if(Q[0]>-1)
                 k = Q[rnd.nextInt(Q.length)];
-            else
-                k = rnd.nextInt(M.move_x[8].length);
+            else{
+                Move(an);
+                return;
+            }
             x = an.old.x + M.move_x[8][k];
             y = an.old.y + M.move_y[8][k];
-            //移動先が存在する
-            if((x>0&&x<MAX_size)&&(y>0&&y<MAX_size)&&grand.ant[y][x]==0){
-                //以前の位置から蟻を削除                   
-                //蟻の移動
-                Point P  = an.old;
-                an.Move(x, y);
-                //移動後の位置に蟻を追加
-                grand.resetAnt(an,P);
-                //ループ強制抜け
+            if(grand.MovingANT(x, y, an))
                 break;
-            }
+            System.out.println("d");
         }        
     }
+    
+    ///////                         RandomQがおかしい？ 座標が0以下になる模様
+    
+    
     public void Moves2(ant an){
         int k,x,y,count=0;
         Random rnd = new Random();
+//            int Q = antOperation.Around(an, grand.ant);
+        int[] Q = antOperation.RandomQ(an, grand.ant,2);
         while(count<30){
             count++;
-//            int Q = antOperation.Around(an, grand.ant);
-            int[] Q = antOperation.RandomQ(an, grand.ant,2);
-//            k = rnd.nextInt(M.move_X[Q].length);
-            k= Q[rnd.nextInt(Q.length)];
+            if(Q[0]>-1)
+                k = Q[rnd.nextInt(Q.length)];
+            else{
+                Moves(an);
+                return;
+            }
             x = an.old.x + M.move_X[8][k];
             y = an.old.y + M.move_Y[8][k];
             //移動先が存在する
-            if((x>0&&x<MAX_size)&&(y>0&&y<MAX_size)){
-                //以前の位置から蟻を削除                   
-                //蟻の移動
-                Point P  = an.old;
-                an.Move(x, y);
-                //移動後の位置に蟻を追加
-                grand.resetAnt(an,P);
-                //ループ強制抜け
+            if(grand.MovingANT(x, y, an))
                 break;
-            }
+            System.out.println("d");
         }        
     }
     //***物を持っている時***//

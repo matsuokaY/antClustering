@@ -128,7 +128,7 @@ public class Grand {
     
     //***蟻の移動***//
     public boolean MovingANT(int x,int y,ant an){
-        if((x>0&&x<Field.MAX_size)&&(y>0&&y<Field.MAX_size)&&this.ant[y][x]==0){
+        if((x>=0&&x<Field.MAX_size)&&(y>=0&&y<Field.MAX_size)){
             //以前の位置から蟻を削除                   
             //蟻の移動
             Point P  = an.old;
