@@ -92,7 +92,11 @@ public class antOperation {
         int[] state = new int[Field.MAX_kind+1];
         for(int i=X;i<Xend;i++){
             for(int j=Y;j<Yend;j++){
-                state[A[j][i]]++;
+                if(A[j][i]!=0){
+                    state[A[j][i]]++;
+                    if(i==x&&j==y)
+                        state[A[j][i]]+=2;
+                }
             }
         }
         for(int i=1;i<state.length;i++)
@@ -195,9 +199,12 @@ public class antOperation {
                 List.add(k);
                 count++;
             }
-        int[] result =new int[count+1];
-        if(count == 0)
+        if(count == 0){
+            int[] result ={-1};
             return result;
+        }
+        int[] result =new int[count];
+
         for(int l=0;l<count;l++){
             result[l] = List.get(l);
         }

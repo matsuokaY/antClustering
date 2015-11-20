@@ -1,6 +1,7 @@
 
 package antclustering;
 
+import static antclustering.Field.MAX_size;
 import java.awt.Point;
 
 
@@ -125,4 +126,18 @@ public class Grand {
         return count;
     }
     
+    //***蟻の移動***//
+    public boolean MovingANT(int x,int y,ant an){
+        if((x>0&&x<Field.MAX_size)&&(y>0&&y<Field.MAX_size)&&this.ant[y][x]==0){
+            //以前の位置から蟻を削除                   
+            //蟻の移動
+            Point P  = an.old;
+            an.Move(x, y);
+            //移動後の位置に蟻を追加
+            resetAnt(an,P);
+            //ループ抜け
+            return true;
+            }
+        return false;
+    }
 }

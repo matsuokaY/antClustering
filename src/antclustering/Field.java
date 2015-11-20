@@ -224,11 +224,11 @@ public class Field {
     public void Moves(ant an){
         int k,x,y,count=0;
         Random rnd = new Random();
+//            int Q = antOperation.Around(an, grand.ant);
+        int[] Q = antOperation.RandomQ(an, grand.ant,1);
         while(count<30){
             count++;
-//            int Q = antOperation.Around(an, grand.ant);
-            int[] Q = antOperation.RandomQ(an, grand.ant,1);
-            if(Q.length!=0)
+            if(Q[0]>-1)
                 k = Q[rnd.nextInt(Q.length)];
             else
                 k = rnd.nextInt(M.move_x[8].length);
