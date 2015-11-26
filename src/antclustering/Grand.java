@@ -44,14 +44,14 @@ public class Grand {
     //**********************************************************************************************//
     //***フェロモンの散布***//
     public void setPheromone(ant[] ant){
-        int state=0;
+        result S = new result();
         int R = 3;
         for(int i=0;i<ant.length;i++){
 //            state = this.state[ant[i].Location.y][ant[i].Location.x];
-            state = antOperation.AroundState(ant[i],this.state);
-            if(state!=0&&this.pheromone[state][ant[i].Location.y][ant[i].Location.x]<p_max){
+            S = antOperation.AroundState(ant[i],this.state);
+            if(S.state!=0&&this.pheromone[S.state][ant[i].Location.y][ant[i].Location.x]<p_max){
 //                this.pheromone[state][ant[i].Location.y][ant[i].Location.x] += p/D(ant[i] , R);
-                this.pheromone[state][ant[i].Location.y][ant[i].Location.x] += p;
+                this.pheromone[S.state][ant[i].Location.y][ant[i].Location.x] += p/12*S.value;
             }
         }
     }

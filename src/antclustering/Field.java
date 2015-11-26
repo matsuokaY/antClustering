@@ -1,22 +1,13 @@
 package antclustering;
 
 import java.util.Random;
-import antclustering.Grand;
-import antclustering.ant;
-import antclustering.C;
 import java.awt.Point;
-
-/*******
- * 0：配置なし
- * 1~kind：オブジェクト
- * kind+1：蟻
- * kind+2~kind*2+1：オブジェクトと蟻
- ******/
 
 public class Field {
     //現在の状態(存在している物体の種類)
     public static Grand grand ;
     //蟻
+    public static int ant_E;
     public static ant[] ant;
     //閾値
     static double Kcrowd = 2;
@@ -68,7 +59,7 @@ public class Field {
         limitCount = iteration / 100;
         HalfIteration = iteration/2;
         ThirdIteration = iteration/3;
-        setS();
+       // setS();
          
     }
     public void setS(){
@@ -92,10 +83,11 @@ public class Field {
         grand.ant = new int[MAX_size][MAX_size];
         grand.pheromone = new double[MAX_kind+1][MAX_size][MAX_size];
         grand.C = new C[MAX_kind];
+        ant_E = (int) (MAX_ant*0.2);
         ant = new ant[MAX_ant];
         int object_x,object_y,object_kind,ant_size=0,object_size=0;
         //蟻の作成
-        for(int i = 0; i < MAX_ant; i++){
+        for(int i=0;i<ant.length;i++){
             ant[i] = new ant(); 
         }
         
@@ -146,121 +138,13 @@ public class Field {
             ant = antClone;
             grand.resetState();
             //ランダム移動
-            wander(i);
+            M.wander(i,ant,grand);
             grand.setPheromone(ant);
             grand.lostP();
         }
         System.out.println("\r ");
     }
 //**********************************************************************************************//    
-    //***蟻の移動　ランダム***//
-    public void wander(int i){   
-        //蟻すべてがランダムに移動
-        int an=0;
-        for(;an<(int)(MAX_ant*0.2);an++){
-            //移動が完了するまで
-            if(ant[an].time < limitMoveTime){
-                Moves(ant[an]);
-            }else{
-                Moves2(ant[an]);
-            }
-        }
-        grand.C=antOperation.PAround(grand.pheromone);
-        for(;an<MAX_ant;an++){
-            if(ant[an].State!=0&&i>HalfIteration){
-                Carry(ant[an]);
-            }else if(ant[an].time < limitMoveTime){
-                Move(ant[an]);
-            }else{
-                Move2(ant[an]);
-            }
-        }
-    }
-    //***ランダム移動　1マス***//
-    public void Move(ant an){
-        int k,x,y,count=0;
-        Random rnd = new Random();
-        while(count<30){
-            count++;
-            k = rnd.nextInt(M.move_x[8].length);
-            x = an.old.x + M.move_x[8][k];
-            y = an.old.y + M.move_y[8][k];
-            //移動先が存在する
-            if(grand.MovingANT(x, y, an))
-                break;
-        }        
-    }
-    //***ランダム移動　2マス***//
-    public void Move2(ant an){
-        int k,x,y,count=0;
-        Random rnd = new Random();
-        while(count<40){
-                count++;
-                k = rnd.nextInt(moveX.length);
-                x = an.old.x + moveX[k];
-                y = an.old.y + moveY[k];
-                if(grand.MovingANT(x, y, an))
-                    break;
-            }
-    }
-    public void Moves(ant an){
-        int k,x,y,count=0;
-        int[] Q = antOperation.RandomQ(an, grand.ant,1);
-        if(Q[0]!=-1){
-            Random rnd = new Random();
-            k = Q[rnd.nextInt(Q.length)];
-        }
-        else{
-            Move(an);
-            return;
-        }
-        x = an.old.x + M.move_x[8][k];
-        y = an.old.y + M.move_y[8][k];
-        if(grand.MovingANT(x, y, an))
-            return;
-    }
-    ///////                         RandomQがおかしい？ 座標が0以下になる模様
-    public void Moves2(ant an){
-        int k,x,y,count=0;
-        int[] Q = antOperation.RandomQ(an, grand.ant,2);
-        if(Q[0]!=-1){
-            Random rnd = new Random();
-            k = Q[rnd.nextInt(Q.length)];
-        }
-        else{
-            Moves(an);
-            return;
-        }
-        x = an.old.x + M.move_X[8][k];
-        y = an.old.y + M.move_Y[8][k];
-        //移動先が存在する
-        if(grand.MovingANT(x, y, an))
-            return;
-    }
-    //***物を持っている時***//
-    public void Carry(ant an){
-        int k,x,y,count=0;
-        Random rnd = new Random();
-        int Q = antOperation.CarryAround(an, grand.C);
-        while(count<30){
-            count++;
-            k = rnd.nextInt(M.move_x[Q].length);
-            x = an.old.x + M.move_x[Q][k];
-            y = an.old.y + M.move_y[Q][k];
-            //移動先が存在する
-            if((x>0&&x<MAX_size)&&(y>0&&y<MAX_size)){
-                //以前の位置から蟻を削除                   
-                //蟻の移動
-                Point P  = an.old;
-                an.Move(x, y);
-                //移動後の位置に蟻を追加
-                grand.resetAnt(an,P);
-                //ループ強制抜け
-                break;
-            }
-        }        
-    }
-//**********************************************************************************************//
     //***配置状態の表示(蟻有)***//
     public void Check(){    
         int object[]=new int[MAX_kind+1];
@@ -385,6 +269,111 @@ public class Field {
     public static double P_drop(int an,double X,double F){
         return X*Math.pow(Kdrop/(Kdrop+F),2);
     }
-            
+    //***蟻の移動　ランダム***//
+    public void wander(int i){   
+        //蟻すべてがランダムに移動
+        int an=0;
+        for(;an<ant_E;an++){
+            //移動が完了するまで
+            if(ant[an].time < limitMoveTime){
+                Moves(ant[an]);
+            }else{
+                Moves2(ant[an]);
+            }
+        }
+        grand.C=antOperation.PAround(grand.pheromone);
+        for(;an<MAX_ant;an++){
+            if(ant[an].State!=0&&i>HalfIteration){
+                Carry(ant[an]);
+            }else if(ant[an].time < limitMoveTime){
+                Move(ant[an]);
+            }else{
+                Move2(ant[an]);
+            }
+        }
+    }
+    //***ランダム移動***//
+    public void Move(ant an){
+        int k,x,y,count=0;
+        Random rnd = new Random();
+        while(count<30){
+            count++;
+            k = rnd.nextInt(M.move_x[8].length);
+            x = an.old.x + M.move_x[8][k];
+            y = an.old.y + M.move_y[8][k];
+            //移動先が存在する
+            if(grand.MovingANT(x, y, an))
+                break;
+        }        
+    }
+    public void Move2(ant an){
+        int k,x,y,count=0;
+        Random rnd = new Random();
+        while(count<40){
+                count++;
+                k = rnd.nextInt(moveX.length);
+                x = an.old.x + moveX[k];
+                y = an.old.y + moveY[k];
+                if(grand.MovingANT(x, y, an))
+                    break;
+            }
+    }
+    public void Moves(ant an){
+        int k,x,y,count=0;
+        int[] Q = antOperation.RandomQ(an, grand.ant,1);
+        if(Q[0]!=-1){
+            Random rnd = new Random();
+            k = Q[rnd.nextInt(Q.length)];
+        }
+        else{
+            Move(an);
+            return;
+        }
+        x = an.old.x + M.move_x[8][k];
+        y = an.old.y + M.move_y[8][k];
+        if(grand.MovingANT(x, y, an))
+            return;
+    }
+    public void Moves2(ant an){
+        int k,x,y,count=0;
+        int[] Q = antOperation.RandomQ(an, grand.ant,2);
+        if(Q[0]!=-1){
+            Random rnd = new Random();
+            k = Q[rnd.nextInt(Q.length)];
+        }
+        else{
+            Moves(an);
+            return;
+        }
+        x = an.old.x + M.move_X[8][k];
+        y = an.old.y + M.move_Y[8][k];
+        //移動先が存在する
+        if(grand.MovingANT(x, y, an))
+            return;
+    }
+    //***物を持っている時***//
+    public void Carry(ant an){
+        int k,x,y,count=0;
+        Random rnd = new Random();
+        int Q = antOperation.CarryAround(an, grand.C);
+        while(count<30){
+            count++;
+            k = rnd.nextInt(M.move_x[Q].length);
+            x = an.old.x + M.move_x[Q][k];
+            y = an.old.y + M.move_y[Q][k];
+            //移動先が存在する
+            if((x>0&&x<MAX_size)&&(y>0&&y<MAX_size)){
+                //以前の位置から蟻を削除                   
+                //蟻の移動
+                Point P  = an.old;
+                an.Move(x, y);
+                //移動後の位置に蟻を追加
+                grand.resetAnt(an,P);
+                //ループ強制抜け
+                break;
+            }
+        }        
+    }
+//**********************************************************************************************//
 }
     

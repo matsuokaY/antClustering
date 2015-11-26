@@ -9,6 +9,11 @@ class value{
     Grand grand;
 }
 
+class result{
+    int value;
+    int state;
+}
+
 public class antOperation {
     static int pickCount = 3;
 
@@ -82,8 +87,8 @@ public class antOperation {
     
     //**********************************************************************************************//
     //周りにある要素の中から最も多い要素を返す。
-    public static int AroundState(ant ant, int[][] A){
-        int x = ant.Location.x,y = ant.Location.y,X,Y,Xend,Yend,result=0;
+    public static result AroundState(ant ant, int[][] A){
+        int x = ant.Location.x,y = ant.Location.y,X,Y,Xend,Yend;
         //蟻が認識する範囲
         X = Math.max(0,x-r);
         Xend = Math.min(x+r,Field.MAX_size-1);
@@ -99,9 +104,13 @@ public class antOperation {
                 }
             }
         }
+        result result = new result();
+        result.state=0;
         for(int i=1;i<state.length;i++)
-            if(state[i]>state[result])
-                result = i;
+            if(state[i]>state[result.state]){
+                result.state=i;
+                result.value=state[i];
+            }
         return result;
     }
     //周辺n*nから蟻が多い方向(8方向)を見つける  n=R*2+1 R-rの範囲
@@ -207,20 +216,5 @@ public class antOperation {
             result[l] = List.get(l);
         }
         return result;
-    }
-    public static int[] RandamQ2(ant ant,int[][] A,int Re){
-        int count=8;
-        if(ant.Location.x == 0||ant.Location.x==A.length-1){
-            count -= 3;
-            if(ant.Location.y == 0||ant.Location.y==A.length-1)
-                count -= 2;
-        }else if(ant.Location.y == 0||ant.Location.y==A.length-1)
-            count -=3;
-        
-        int[] value = new int[count];
-        
-        
-        return value;
-        
     }
 }
