@@ -181,11 +181,10 @@ public class antOperation {
         int[] value = new int[4*Re*Re+4*Re];
         int x=ant.Location.x,y=ant.Location.y,count=0;
         ArrayList<Integer> List=new ArrayList<>();
-        for(int j=y-Re;j<y+Re;j++){
-            if(j!=y)
-                for(int i=x-Re;i<x+Re;i++){
-                    if(i!=x){
-                        if(i>0&&i<Field.MAX_size&&j>0&&j<Field.MAX_size)
+        for(int j=y-Re;j<=y+Re;j++){
+                for(int i=x-Re;i<=x+Re;i++){
+                    if(i!=x||j!=y){
+                        if(i>=0&&i<A.length&&j>=0&&j<A.length)
                             value[count] = A[j][i];
                         else
                             value[count] = -1;
@@ -204,10 +203,24 @@ public class antOperation {
             return result;
         }
         int[] result =new int[count];
-
         for(int l=0;l<count;l++){
             result[l] = List.get(l);
         }
         return result;
+    }
+    public static int[] RandamQ2(ant ant,int[][] A,int Re){
+        int count=8;
+        if(ant.Location.x == 0||ant.Location.x==A.length-1){
+            count -= 3;
+            if(ant.Location.y == 0||ant.Location.y==A.length-1)
+                count -= 2;
+        }else if(ant.Location.y == 0||ant.Location.y==A.length-1)
+            count -=3;
+        
+        int[] value = new int[count];
+        
+        
+        return value;
+        
     }
 }

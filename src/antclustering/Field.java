@@ -203,51 +203,39 @@ public class Field {
                     break;
             }
     }
-    
     public void Moves(ant an){
         int k,x,y,count=0;
-        Random rnd = new Random();
-//            int Q = antOperation.Around(an, grand.ant);
         int[] Q = antOperation.RandomQ(an, grand.ant,1);
-        while(count<30){
-            count++;
-            if(Q[0]>-1)
-                k = Q[rnd.nextInt(Q.length)];
-            else{
-                Move(an);
-                return;
-            }
-            x = an.old.x + M.move_x[8][k];
-            y = an.old.y + M.move_y[8][k];
-            if(grand.MovingANT(x, y, an))
-                break;
-            System.out.println("d");
-        }        
+        if(Q[0]!=-1){
+            Random rnd = new Random();
+            k = Q[rnd.nextInt(Q.length)];
+        }
+        else{
+            Move(an);
+            return;
+        }
+        x = an.old.x + M.move_x[8][k];
+        y = an.old.y + M.move_y[8][k];
+        if(grand.MovingANT(x, y, an))
+            return;
     }
-    
     ///////                         RandomQがおかしい？ 座標が0以下になる模様
-    
-    
     public void Moves2(ant an){
         int k,x,y,count=0;
-        Random rnd = new Random();
-//            int Q = antOperation.Around(an, grand.ant);
         int[] Q = antOperation.RandomQ(an, grand.ant,2);
-        while(count<30){
-            count++;
-            if(Q[0]>-1)
-                k = Q[rnd.nextInt(Q.length)];
-            else{
-                Moves(an);
-                return;
-            }
-            x = an.old.x + M.move_X[8][k];
-            y = an.old.y + M.move_Y[8][k];
-            //移動先が存在する
-            if(grand.MovingANT(x, y, an))
-                break;
-            System.out.println("d");
-        }        
+        if(Q[0]!=-1){
+            Random rnd = new Random();
+            k = Q[rnd.nextInt(Q.length)];
+        }
+        else{
+            Moves(an);
+            return;
+        }
+        x = an.old.x + M.move_X[8][k];
+        y = an.old.y + M.move_Y[8][k];
+        //移動先が存在する
+        if(grand.MovingANT(x, y, an))
+            return;
     }
     //***物を持っている時***//
     public void Carry(ant an){
