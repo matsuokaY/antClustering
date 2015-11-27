@@ -42,7 +42,7 @@ public class M {
                 Moves2(ant[an],grand);
             }
         }
-        grand.C=antOperation.PAround(grand.pheromone);
+    //    grand.C=antOperation.PAround(grand.pheromone);
         for(;an<Field.MAX_ant;an++){
             if(ant[an].State!=0&&i>Field.HalfIteration){
                 Carry(ant[an],grand);
@@ -116,7 +116,8 @@ public class M {
     public static void Carry(ant an,Grand grand){
         int k,x,y,count=0;
         Random rnd = new Random();
-        int Q = antOperation.CarryAround(an, grand.C);
+//        int Q = antOperation.CarryAround(an, grand.C);
+        int Q = antOperation.CarryAround2(an, grand,2);
         while(count<30){
             count++;
             k = rnd.nextInt(M.move_x[Q].length);

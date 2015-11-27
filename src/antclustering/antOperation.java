@@ -185,6 +185,29 @@ public class antOperation {
             result = 0;
         return result;
     }
+    public static int CarryAround2(ant ant,Grand grand,int Re){
+        int result=0,state=ant.State,x=ant.Location.x,y=ant.Location.y,count=0;
+        double[] value = new double[9];
+        for(int j=y-Re;j<=y+Re;j++){
+                for(int i=x-Re;i<=x+Re;i++){
+                    if(i>=0&&i<grand.state.length&&j>=0&&j<grand.state.length)
+                        value[count] = grand.pheromone[state][j][i];
+                    else
+                        value[count] = -1;
+                    count++;
+                }
+        }
+        for(int i=1;i<value.length;i++){
+            if(value[result]<value[i])
+                result=i;
+        }
+        if(result==4)
+            result =-1;
+        else if(result>3)
+            result -=1;
+
+        return result;
+    }
     //進むべき方向の選択肢決め
     public static int[] RandomQ(ant ant,int[][] A,int Re){
         int[] value = new int[4*Re*Re+4*Re];

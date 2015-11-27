@@ -29,7 +29,8 @@ public class AntClustering {
 //        grand.Check();
         field.NotAntCheck();
         System.out.println("\nクラスタリング開始");
-        field.Clustering();
+//        field.Clustering();
+        normal.Clustering();
         System.out.println("クラスタリング終了");
         System.out.println("\n/****************************************************************************/");
         field.Check();
