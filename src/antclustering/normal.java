@@ -14,7 +14,8 @@ import java.util.Random;
 class Memory{
     Point P;
     int state;
-    int D;
+    //下したことがあるかどうか
+    boolean D;
 }
 public class normal {
 //現在の状態(存在している物体の種類)
@@ -94,7 +95,7 @@ public class normal {
         while(object_size<MAX_object){
             object_x = rnd.nextInt(MAX_size);
             object_y = rnd.nextInt(MAX_size);
-            object_kind = rnd.nextInt(MAX_kind);
+            object_kind = rnd.nextInt(MAX_kind+1);
             if(object_kind!=0){
                 if(grand.state[object_y][object_x]==0){
                     grand.setState(object_x,object_y,object_kind);
@@ -114,7 +115,9 @@ public class normal {
         }
     }
     public void Clustering() {
-        Memory[] M = new Memory[MAX_kind];
+        Memory[] Memory = new Memory[MAX_kind];
+        Memory Memo = new Memory();
+        Random rnd = new Random();
         Point P ;
         //「Interation」の数だけ繰り返し
         for(int t=0;t<Iteration;t++){
@@ -126,7 +129,7 @@ public class normal {
                 if(is_carryingObject(ant[an])&&is_cellEmpty(ant[an].Location,grand.state)){
                     double R = Math.random();
                     if(Pdrop(F)<R){
-                        M = set_memory(M,ant[an].Location,ant[an].State);
+                        Memory = set_memory(Memory,ant[an].Location,ant[an].State);
                         grand.state[ant[an].Location.y][ant[an].Location.x]=ant[an].State;
                         ant[an].State=0;
                     }
@@ -135,7 +138,20 @@ public class normal {
                     if(Ppick(F)>R){
                         ant[an].State=grand.state[ant[an].Location.y][ant[an].Location.x];
                         grand.state[ant[an].Location.y][ant[an].Location.x]=0;
-                        P = serch_memory(M,ant[an].State);
+                        Memo=serch_memory(Memory,ant[an].State);
+                        if(Memo.state==-1)
+                            break;
+                        if(!grand.MovingANT(Memo.P.x, Memo.P.y, ant[an])){
+                            int x = Memo.P.x,y = Memo.P.y,k;                   
+                            //一定回数移動を試みる
+                            for(int mt=0;mt<limitMoveTime;mt++){
+                                if(grand.MovingANT(x, y, ant[an]))
+                                    break;
+                                k = rnd.nextInt(M.moveX.length);
+                                x += M.moveX[k];
+                                y += M.moveY[k];
+                            }
+                        }
                     }
                 }
                 //ランダム移動
@@ -266,10 +282,8 @@ public class normal {
             count++;
             int x = ant.Location.x+rnd.nextInt(2*V)-V;
             int y = ant.Location.y+rnd.nextInt(2*V)-V;
-            //移動先に蟻がいない
-            if(grand.ant[y][x]==0)
-                //移動先が存在する
-                if(grand.MovingANT(x, y, ant))
+            //移動先に蟻がいない　かつ　移動先が存在する
+                if(grand.MovingANT(x, y, ant)&&grand.ant[y][x]==0)
                     return;
         }        
     }
@@ -297,7 +311,7 @@ public class normal {
         double result = 0;
         for(int i=ant.Location.y-Range;i<ant.Location.y+Range;i++)
             for(int j=ant.Location.x-Range;j<ant.Location.x+Range;j++)
-                if(ant.State==grand[i][j])
+                if(((i>=0&&i<MAX_size)&&(j>=0&&j<MAX_size))&&ant.State==grand[i][j])
                     result += 1-EuclideanLenght(ant.Location.x,ant.Location.y,j,i)/Threshold();
         //蟻が知覚できる範囲のマスで割る
         result /= 4*Range*Range+4*Range+1;
@@ -309,13 +323,21 @@ public class normal {
     }
 
     private Memory[] set_memory(Memory[] M, Point P, int State) {
+        if(M[State].D==true)
+            return M;
         M[State].P = P;
         M[State].state=State;
+        M[State].D = true;
         return M;
     }
 
-    private M serch_memory(Memory[] M, int State) {
-        return M[State].D!=0;
+    private Memory serch_memory(Memory[] M, int State) {
+        Memory result = new Memory();
+        if(M[State].D!=true){
+            result.state = -1;
+            return result;
+        }
+        return M[State];
     }
 
 }

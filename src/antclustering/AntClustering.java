@@ -18,7 +18,9 @@ public class AntClustering {
     
     public static void main(String[] args) {
         Field field = new Field();
-        local_initial_parameters(field);
+        normal field2 = new normal();
+//        local_initial_parameters(field);
+        local_initial(field2);
         System.out.println("\n終了");
     }
     
@@ -29,8 +31,19 @@ public class AntClustering {
 //        grand.Check();
         field.NotAntCheck();
         System.out.println("\nクラスタリング開始");
-//        field.Clustering();
-        normal.Clustering();
+        field.Clustering();
+        System.out.println("クラスタリング終了");
+        System.out.println("\n/****************************************************************************/");
+        field.Check();
+    }
+    public static void local_initial(normal field){     
+        field.set(size,object,kind,ant,iteration,limittime);
+        field.Fieldset();
+        System.out.println("配置完了");
+//        grand.Check();
+        field.NotAntCheck();
+        System.out.println("\nクラスタリング開始");
+        field.Clustering();
         System.out.println("クラスタリング終了");
         System.out.println("\n/****************************************************************************/");
         field.Check();
