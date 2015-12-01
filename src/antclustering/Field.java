@@ -87,10 +87,10 @@ public class Field {
         ant = new ant[MAX_ant];
         int object_x,object_y,object_kind,ant_size=0,object_size=0;
         //蟻の作成
-        for(int i=0;i<ant.length;i++){
+/*        for(int i=0;i<ant.length;i++){
             ant[i] = new ant(); 
         }
-        
+*/        
         
         //配置
         while(object_size<MAX_object||ant_size<MAX_ant){
@@ -105,6 +105,7 @@ public class Field {
                     object_size++;
                 //蟻の配置
                 }else if(object_kind == ANT && ant_size<MAX_ant){
+                    ant[ant_size] = new ant(); 
                     ant[ant_size].set(object_x,object_y,ant_size,0);
                     grand.setAnt(object_x,object_y);
                     ant_size++;

@@ -1,6 +1,7 @@
 
 package antclustering;
 
+import static antclustering.Field.HalfIteration;
 import java.awt.Point;
 import java.util.Random;
 
@@ -23,15 +24,6 @@ public class normal {
     static int Range = 2;
     static int V = 3;
     
-
-    //  乱数によって動かす方向を決定するための配列
-    static final int[] movex = {-1, 0, 1,-1, 1,-1, 0, 1};
-    static final int[] movey = {-1,-1,-1, 0, 0, 1, 1, 1};
-    static final int[] moveX = {-2,-1, 0, 1, 2,-2,-1, 0, 1, 2,-2,-1, 1, 2,-2,-1, 0, 1, 2,-2,-1, 0, 1, 2};
-    static final int[] moveY = {-2,-2,-2,-2,-2,-1,-1,-1,-1,-1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2};
-    
-    
-    static Point[] S = new Point[4];
     //*****************************************************************************//
     static int MAX_size;
     static int MAX_object;
@@ -41,13 +33,13 @@ public class normal {
     static int ANT;
     //繰り返し回数
     static int Iteration;
+    static int limitMoveTime;
+    static int limitKeepTime;
+    static int limitCount;
     //繰り返し回数の半分
     static int HalfIteration;
     //繰り返し回数の三分の一
     static int ThirdIteration;
-    static int limitMoveTime;
-    static int limitKeepTime;
-    static int limitCount;
     //*****************************************************************************//
     
 //**********************************************************************************************//
@@ -65,7 +57,7 @@ public class normal {
         limitKeepTime = (int) (limitmovetime*1.5);
         limitCount = iteration / 100;
         HalfIteration = iteration/2;
-        ThirdIteration = iteration/3;    
+        ThirdIteration = iteration/3;
     }
     //***初期配置を行う***//
     public void Fieldset(){
@@ -77,10 +69,6 @@ public class normal {
         ant_E = (int) (MAX_ant*0.2);
         ant = new ant[MAX_ant];
         int object_x,object_y,object_kind,ant_size=0,object_size=0;
-        //蟻の作成
-        for(int i=0;i<ant.length;i++){
-            ant[i] = new ant();
-        }
         
         
         //配置
@@ -101,6 +89,7 @@ public class normal {
             object_x = rnd.nextInt(MAX_size);
             object_y = rnd.nextInt(MAX_size);
             if(grand.ant[object_y][object_x]==0){
+                ant[ant_size] = new ant();
                 ant[ant_size].set(object_x,object_y,ant_size,0);
                 grand.setAnt(object_x,object_y);
                 ant_size++;
@@ -111,7 +100,6 @@ public class normal {
         Memory[] Memory = new Memory[MAX_kind];
         Memory Memo = new Memory();
         Random rnd = new Random();
-        Point P ;
         //「Interation」の数だけ繰り返し
         for(int t=0;t<Iteration;t++){
             //回数表示
@@ -121,7 +109,7 @@ public class normal {
                 double F = f(ant[an],grand.state);
                 if(is_carryingObject(ant[an])&&is_cellEmpty(ant[an].Location,grand.state)){
                     double R = Math.random();
-                    if(Pdrop(F)<R){
+                    if(Pdrop(F)>R){
                         Memory = set_memory(Memory,ant[an].Location,ant[an].State);
                         grand.state[ant[an].Location.y][ant[an].Location.x]=ant[an].State;
                         ant[an].State=0;
@@ -268,7 +256,6 @@ public class normal {
             }
     }
     private void wanderBeta(int t, ant ant, Grand grand) {
-        int k,count=0;
         M.Moves(ant, grand);
     }
     private void wander(int t, ant ant, Grand grand) {
