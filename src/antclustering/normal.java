@@ -1,14 +1,7 @@
 
 package antclustering;
 
-import static antclustering.M.Carry;
-import static antclustering.M.Move;
-import static antclustering.M.Move2;
-import static antclustering.M.Moves;
-import static antclustering.M.Moves2;
-import static antclustering.M.moveX;
 import java.awt.Point;
-import java.util.ArrayList;
 import java.util.Random;
 
 class Memory{
@@ -24,7 +17,7 @@ public class normal {
     public static int ant_E;
     public static ant[] ant;
     //閾値
-    static final double A = 0.8;
+    static final double A = 0.5;
     static final double K1 = 0.5;
     static final double K2 = 0.5;
     static int Range = 2;
@@ -155,7 +148,7 @@ public class normal {
                     }
                 }
                 //ランダム移動
-                wander(t,ant[an],grand);
+                wanderBeta(t,ant[an],grand);
             }
             
         }
@@ -274,7 +267,10 @@ public class normal {
                 System.out.print("\r");
             }
     }
-
+    private void wanderBeta(int t, ant ant, Grand grand) {
+        int k,count=0;
+        M.Moves(ant, grand);
+    }
     private void wander(int t, ant ant, Grand grand) {
         int k,count=0;
         Random rnd = new Random();

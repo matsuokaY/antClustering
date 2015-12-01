@@ -67,6 +67,7 @@ public class M {
                 break;
         }        
     }
+    //***ランダム移動　距離2***//
     public static void Move2(ant an,Grand grand){
         int k,x,y,count=0;
         Random rnd = new Random();
@@ -79,6 +80,7 @@ public class M {
                     break;
             }
     }
+    //***他の蟻を避ける移動***//
     public static void Moves(ant an,Grand grand){
         int k,x,y,count=0;
         int[] Q = antOperation.RandomQ(an, grand.ant,1);
@@ -95,6 +97,7 @@ public class M {
         if(grand.MovingANT(x, y, an))
             return;
     }
+    //***他の蟻を避ける移動　距離2***//
     public static void Moves2(ant an,Grand grand){
         int k,x,y,count=0;
         int[] Q = antOperation.RandomQ(an, grand.ant,2);
