@@ -1,15 +1,13 @@
 
 package antclustering;
 
-import static antclustering.Field.HalfIteration;
 import java.awt.Point;
 import java.util.Random;
 
 class Memory{
-    Point P;
-    int state;
-    //下したことがあるかどうか
-    boolean D;
+    Point[] P;
+    int[] state;
+    int number;
 }
 public class normal {
 //現在の状態(存在している物体の種類)
@@ -23,6 +21,7 @@ public class normal {
     static final double K2 = 0.5;
     static int Range = 2;
     static int V = 3;
+    static final int Memory_size = 6;
     
     //*****************************************************************************//
     static int MAX_size;
@@ -53,7 +52,7 @@ public class normal {
         MAX_state = kind*2+1;
         ANT = kind +1;
         Iteration = iteration;
-        limitMoveTime = limitmovetime;
+        limitMoveTime = 8;
         limitKeepTime = (int) (limitmovetime*1.5);
         limitCount = iteration / 100;
         HalfIteration = iteration/2;
@@ -91,14 +90,17 @@ public class normal {
             if(grand.ant[object_y][object_x]==0){
                 ant[ant_size] = new ant();
                 ant[ant_size].set(object_x,object_y,ant_size,0);
+                ant[ant_size].Memory.state = new int[Memory_size];
+                for(int i=0;i<Memory_size;i++){
+                    ant[ant_size].Memory.P[i] = new Point();
+                }
                 grand.setAnt(object_x,object_y);
                 ant_size++;
             }
         }
     }
     public void Clustering() {
-        Memory[] Memory = new Memory[MAX_kind];
-        Memory Memo = new Memory();
+        int Memo=0,k;
         Random rnd = new Random();
         //「Interation」の数だけ繰り返し
         for(int t=0;t<Iteration;t++){
@@ -110,7 +112,7 @@ public class normal {
                 if(is_carryingObject(ant[an])&&is_cellEmpty(ant[an].Location,grand.state)){
                     double R = Math.random();
                     if(Pdrop(F)>R){
-                        Memory = set_memory(Memory,ant[an].Location,ant[an].State);
+                        ant[an].Memory = set_memory(ant[an].Memory,ant[an].Location,ant[an].State);
                         grand.state[ant[an].Location.y][ant[an].Location.x]=ant[an].State;
                         ant[an].State=0;
                     }
@@ -119,11 +121,12 @@ public class normal {
                     if(Ppick(F)>R){
                         ant[an].State=grand.state[ant[an].Location.y][ant[an].Location.x];
                         grand.state[ant[an].Location.y][ant[an].Location.x]=0;
-                        Memo=serch_memory(Memory,ant[an].State);
-                        if(Memo.state==-1)
+                        Memo=serch_memory(ant[an].Memory,ant[an].State);
+                        //該当なし
+                        if(Memo==-1)
                             break;
-                        if(!grand.MovingANT(Memo.P.x, Memo.P.y, ant[an])){
-                            int x = Memo.P.x,y = Memo.P.y,k;                   
+                        if(!grand.MovingANT(ant[an].Memory.P[Memo].x,ant[an].Memory.P[Memo].y, ant[an])){
+                            int x = ant[an].Memory.P[Memo].x,y = ant[an].Memory.P[Memo].y;                   
                             //一定回数移動を試みる
                             for(int mt=0;mt<limitMoveTime;mt++){
                                 if(grand.MovingANT(x, y, ant[an]))
@@ -274,13 +277,13 @@ public class normal {
     private boolean is_carryingObject(ant ant) {
         return ant.State!=0;
     }
+    //何も持っていないか
+    private boolean is_unloading(ant ant) {
+        return ant.State==0;
+    }
     //置ける状態か
     private boolean is_cellEmpty(Point P,int[][] A) {
         return A[P.y][P.x]==0;
-    }
-        //持っている物がないか
-    private boolean is_unloading(ant ant) {
-        return ant.State==0;
     }
     //持ち上げれる状態か
     private boolean has_object(Point P,int[][] A) {
@@ -305,22 +308,25 @@ public class normal {
         return A*(1+V-1/V);
     }
 
-    private Memory[] set_memory(Memory[] M, Point P, int State) {
-        if(M[State].D==true)
-            return M;
-        M[State].P = P;
-        M[State].state=State;
-        M[State].D = true;
+    private Memory set_memory(Memory M, Point P,int State) {
+        if(M.number == M.state.length)
+            M.number = 0;
+        M.P[M.number] = P;
+        M.state[M.number]=State;
+        M.number++;
         return M;
     }
 
-    private Memory serch_memory(Memory[] M, int State) {
-        Memory result = new Memory();
-        if(M[State].D!=true){
-            result.state = -1;
-            return result;
+    private int serch_memory(Memory M, int State) {
+        int k=M.number;
+        for(int i=0;i<M.state.length;i++){
+            k-=i;
+            if(k<0&&M.state[k+M.state.length]==State)
+                return k;
+            else if(M.state[k]==State)
+                return k;
         }
-        return M[State];
+        return -1;
     }
 
 }

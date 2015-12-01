@@ -16,6 +16,7 @@ public class ant {
     public Point old;
     public int around;
     public int time;
+    public Memory Memory;
     
     
     //***蟻の配置***//
