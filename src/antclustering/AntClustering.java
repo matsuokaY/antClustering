@@ -37,7 +37,7 @@ public class AntClustering {
         field.Check();
     }
     public static void local_initial(normal field){     
-        field.set(size,object,kind,50,iteration,limittime);
+        field.set(size,object,kind,ant,iteration,limittime);
         field.Fieldset();
         System.out.println("配置完了");
 //        grand.Check();

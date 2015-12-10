@@ -2,12 +2,23 @@
 package antclustering;
 
 import java.awt.Point;
+import java.util.ArrayList;
 import java.util.Random;
 
 class Memory{
     Point[] P;
     int[] state;
     int number;
+}
+class G{
+    int x;
+    int y;
+    int steta;
+    public G(int state,int x,int y){
+        this.steta=state;
+        this.x=x;
+        this.y=y;
+    }
 }
 public class normal {
 //現在の状態(存在している物体の種類)
@@ -16,11 +27,11 @@ public class normal {
     public static int ant_E;
     public static ant[] ant;
     //閾値
-    static final double A = 0.5;
-    static final double K1 = 0.5;
-    static final double K2 = 0.5;
+    static final double A = 1;
+    static final double K1 = 1.5;
+    static final double K2 = 0.3;
     static int Range = 2;
-    static int V = 3;
+    static double V = 2;
     static final int Memory_size = 6;
     
     //*****************************************************************************//
@@ -47,7 +58,8 @@ public class normal {
         grand = new Grand();
         MAX_size = size;
         MAX_object = object;
-        MAX_kind = kind;
+//        MAX_kind = kind;
+        MAX_kind = 1;
         MAX_ant = ant;
         MAX_state = kind*2+1;
         ANT = kind +1;
@@ -90,7 +102,9 @@ public class normal {
             if(grand.ant[object_y][object_x]==0){
                 ant[ant_size] = new ant();
                 ant[ant_size].set(object_x,object_y,ant_size,0);
+                ant[ant_size].Memory = new Memory();
                 ant[ant_size].Memory.state = new int[Memory_size];
+                ant[ant_size].Memory.P = new Point[Memory_size];
                 for(int i=0;i<Memory_size;i++){
                     ant[ant_size].Memory.P[i] = new Point();
                 }
@@ -108,17 +122,23 @@ public class normal {
             Print(t);
             //すべての蟻で実行
             for(int an=0;an<ant.length;an++){
-                double F = f(ant[an],grand.state);
                 if(is_carryingObject(ant[an])&&is_cellEmpty(ant[an].Location,grand.state)){
-                    double R = Math.random();
-                    if(Pdrop(F)>R){
+                    double F = f(ant[an],grand.state);
+//                    System.out.println(F);
+                    double R = Math.random(),P=Pdrop(F);
+//                    System.out.println(ant[an].Location.x+","+ant[an].Location.x+"    "+R+","+P);
+                    if(P>R){
                         ant[an].Memory = set_memory(ant[an].Memory,ant[an].Location,ant[an].State);
                         grand.state[ant[an].Location.y][ant[an].Location.x]=ant[an].State;
                         ant[an].State=0;
                     }
                 }else if(is_unloading(ant[an])&&has_object(ant[an].Location,grand.state)){
-                    double R = Math.random()*4+1;
-                    if(Ppick(F)>R){
+                    double F = f(ant[an],grand.state);
+//                    System.out.println(F);
+//                    double R = Math.random()*4+1,P=Ppick(F);
+                    double R = Math.random(),P=Ppick(F);
+//                    System.out.println(ant[an].Location.x+","+ant[an].Location.x+"    "+R+","+P);
+                    if(P>R){
                         ant[an].State=grand.state[ant[an].Location.y][ant[an].Location.x];
                         grand.state[ant[an].Location.y][ant[an].Location.x]=0;
                         Memo=serch_memory(ant[an].Memory,ant[an].State);
@@ -145,14 +165,14 @@ public class normal {
         }
         System.out.println("\r ");   
     }
-    private double Pdrop(double F){
+    private double Ppick(double F){
         return Math.pow(K1/(K1+F), 2);
     }
-    private double Ppick(double F){
+    private double Pdrop(double F){
         if(F<K2)
             return 2*F;
         else
-            return 1;
+            return 1.00;
     }
     //**********************************************************************************************//    
     //***配置状態の表示(蟻有)***//
@@ -184,7 +204,6 @@ public class normal {
             System.out.println("");
         }
         System.out.println("");
-        CheckP();
         //オブジェクトを持ち上げている蟻の表示
         for(int an=0;an<MAX_ant;an++){
             if(ant[an].State!=0){
@@ -228,18 +247,6 @@ public class normal {
         }
         
     }
-    public void CheckP(){
-        for(int i=0;i<grand.state.length;i++){
-            for(int k=1;k<=MAX_kind;k++){
-                for(int j=0;j<grand.state.length;j++){
-                    int word = (int) (grand.pheromone[k][i][j]);
-                    System.out.print(word + " ");
-                }
-                System.out.print("        ");
-            }
-            System.out.println();
-        }
-    }
     //***表示***//
     public void Print(int i){
         if(i==ThirdIteration){
@@ -266,8 +273,8 @@ public class normal {
         Random rnd = new Random();
         while(count<40){
             count++;
-            int x = ant.Location.x+rnd.nextInt(2*V)-V;
-            int y = ant.Location.y+rnd.nextInt(2*V)-V;
+            int x = (int) (ant.Location.x+rnd.nextInt((int) (2*V))-V);
+            int y = (int) (ant.Location.y+rnd.nextInt((int) (2*V))-V);
             //移動先に蟻がいない　かつ　移動先が存在する
                 if(grand.MovingANT(x, y, ant)&&grand.ant[y][x]==0)
                     return;
@@ -291,23 +298,44 @@ public class normal {
     }
     //***ユークリッド距離の計算***//
     private double EuclideanLenght(int x1,int y1,int x2,int y2){
-        return Math.sqrt(Math.pow(x1-x2,2)+Math.pow(y1-y2,2));
+        double state=Math.sqrt(Math.pow(x1-x2,2)+Math.pow(y1-y2,2));
+        return state;
     }
     private double f(ant ant,int[][] grand) {
-        double result = 0;
-        for(int i=ant.Location.y-Range;i<ant.Location.y+Range;i++)
-            for(int j=ant.Location.x-Range;j<ant.Location.x+Range;j++)
-                if(((i>=0&&i<MAX_size)&&(j>=0&&j<MAX_size))&&ant.State==grand[i][j])
-                    result += 1-EuclideanLenght(ant.Location.x,ant.Location.y,j,i)/Threshold();
+        double result = 0,T=Threshold(),value,s;
+        int state = ant.State,S=0,count=0;
+        int X = ant.Location.x,Y = ant.Location.y;
+        ArrayList<G> List=new ArrayList<G>();
+        if(state==0&&grand[ant.Location.y][ant.Location.x]!=0)
+            state=grand[ant.Location.y][ant.Location.x];
+        else
+            return 0;
+        
+        for(int y=ant.Location.y-Range;y<=ant.Location.y+Range;y++)
+            for(int x=ant.Location.x-Range;x<=ant.Location.x+Range;x++){
+                if((y>=0&&y<MAX_size)&&(x>=0&&x<MAX_size)){
+                    if(grand[y][x]==state){
+                        List.add(new G(grand[y][x],x,y));
+                        count++;
+                    }
+                    S++;
+                }
+            }
+        for(int i=0;i<count;i++){
+            for(int j=0;j<count;j++){
+                value = 1-EuclideanLenght(List.get(i).x,List.get(i).y,List.get(j).x,List.get(j).y)/T;
+                result += value;
+            }
+        }
         //蟻が知覚できる範囲のマスで割る
-        result /= 4*Range*Range+4*Range+1;
+        result /= S;
         return Math.max(0, result);
     }
     //閾値
     private double Threshold(){
-        return A*(1+V-1/V);
+        return A*(1+(V-1)/V);
+        //A*(1+2/3)=5/3*1/2=5/6
     }
-
     private Memory set_memory(Memory M, Point P,int State) {
         if(M.number == M.state.length)
             M.number = 0;
@@ -316,14 +344,13 @@ public class normal {
         M.number++;
         return M;
     }
-
     private int serch_memory(Memory M, int State) {
-        int k=M.number;
+        int k=M.number,g=0;
         for(int i=0;i<M.state.length;i++){
-            k-=i;
-            if(k<0&&M.state[k+M.state.length]==State)
+            g=k+i;
+            if(g<M.state.length&&M.state[g]==State)
                 return k;
-            else if(M.state[k]==State)
+            else if(g>=M.state.length&&M.state[g-M.state.length]==State)
                 return k;
         }
         return -1;
