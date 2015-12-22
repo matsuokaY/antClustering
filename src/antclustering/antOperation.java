@@ -208,7 +208,7 @@ public class antOperation {
 
         return result;
     }
-    //進むべき方向の選択肢決め
+    //進むべき方向の選択肢決め(マスが0の方向へ)
     public static int[] RandomQ(ant ant,int[][] A,int Re){
         int[] value = new int[4*Re*Re+4*Re];
         int x=ant.Location.x,y=ant.Location.y,count=0;
