@@ -9,6 +9,30 @@ class Memory{
     Point[] P;
     int[] state;
     int number;
+    void set_memory(Point P,int State) {
+        for(int i=0;i<=this.number;i++)
+            if(this.state[i]==State){
+                this.P[i]=P;
+                return ;
+            }
+        if(this.number == this.state.length)
+            this.number = 0;
+        this.P[this.number] = P;
+        this.state[this.number]=State;
+        this.number++;
+        return ;
+    }
+    int serch_memory(int State) {
+        int g=0;
+        for(int i=0;i<state.length;i++){
+            g=this.number+i;
+            if(g<state.length&&state[i]==State)
+                return i;
+            else if(g>=state.length&&state[g-state.length]==State)
+                return g-state.length;
+        }
+        return -1;
+    }
 }
 class G{
     int x;
@@ -32,8 +56,7 @@ public class normal {
     static final double K2 = 0.3;
     static int Range = 2;
     static double V = 2;
-    static final int Memory_size = 6;
-    
+    static final int Memory_size = 6;   
     //*****************************************************************************//
     static int MAX_size;
     static int MAX_object;
@@ -114,7 +137,7 @@ public class normal {
         }
     }
     public void Clustering() {
-        int Memo=0,k;
+        int Memo=0;
         Random rnd = new Random();
         //「Interation」の数だけ繰り返し
         for(int t=0;t<Iteration;t++){
@@ -126,7 +149,7 @@ public class normal {
                     double F = f(ant[an],grand.state);
                     double R = Math.random(),P=Pdrop(F);
                     if(P>R){
-                        ant[an].Memory = set_memory(ant[an].Memory,ant[an].Location,ant[an].State);
+                        ant[an].Memory.set_memory(ant[an].Location,ant[an].State);
                         grand.state[ant[an].Location.y][ant[an].Location.x]=ant[an].State;
                         ant[an].State=0;
                     }
@@ -137,20 +160,23 @@ public class normal {
                     if(P>R){
                         ant[an].State=grand.state[ant[an].Location.y][ant[an].Location.x];
                         grand.state[ant[an].Location.y][ant[an].Location.x]=0;
-                        Memo=serch_memory(ant[an].Memory,ant[an].State);
+                        Memo=ant[an].Memory.serch_memory(ant[an].State);
                         //該当なし
                         if(Memo!=-1&&!grand.MovingANT(ant[an].Memory.P[Memo].x,ant[an].Memory.P[Memo].y, ant[an])){
                             int x = ant[an].Memory.P[Memo].x,y = ant[an].Memory.P[Memo].y;
                             //ジャンプ先予定地に蟻がいなければジャンプ
                             if(!is_stayingAnt(grand.ant,ant[an].Memory.P[Memo])){
-                                ant[an].Location.x = ant[an].Memory.P[Memo].x;
-                                ant[an].Location.y = ant[an].Memory.P[Memo].y;
+                                /*grand.ant[ant[an].Location.y][ant[an].Location.x] += -1;
+                                ant[an].Location.x = x;
+                                ant[an].Location.y = y;
+                                grand.ant[y][x] += 1;*/
+                                if(!grand.MovingANT(x,y,ant[an]))
+                                    System.out.println("s");
                             }
                             else{//予定地に方向に向かって移動？
-                                System.out.println("dame");
-                                
+                                System.out.println("dame? ("+x+","+y+") "+grand.state[y][x]);
                             }
-                                
+
                             //ジャンプ後一回数移動を試みる
                             wanderBeta(t,ant[an],grand);
                         }
@@ -184,9 +210,13 @@ public class normal {
     public void Check(){    
         int object[]=new int[MAX_kind+1];
         int object2[]=new int[ANT];
-        int[][] A = new int[MAX_size][MAX_size];
+        int[][] A = new int[MAX_size][MAX_size],B = new int[MAX_size][MAX_size];
         for(int k=0;k<(int)(MAX_ant*0.2);k++){
             A[ant[k].Location.y][ant[k].Location.x]++;
+        }
+        for(int k=0;k<MAX_ant;k++){
+            if(ant[k].State!=0)
+                B[ant[k].Location.y][ant[k].Location.x]++;
         }
         for (int i=0;i<grand.state.length;i++) {
             //要素の様子
@@ -203,7 +233,12 @@ public class normal {
             System.out.print("        ");
             //エージェント蟻の様子
             for(int j=0;j<grand.state.length;j++){
-                System.out.print(A[j][i]+" ");
+                System.out.print(A[i][j]+" ");
+            }
+            System.out.print("        ");
+            //要素を持っている蟻
+            for(int j=0;j<grand.state.length;j++){
+                System.out.print(B[i][j]+" ");
             }
             
             System.out.println("");
@@ -314,6 +349,7 @@ public class normal {
         double state=Math.sqrt(Math.pow(x1-x2,2)+Math.pow(y1-y2,2));
         return state;
     }
+    //困った クリパ必須
     private double f(ant ant,int[][] grand) {
         double result = 0,T=Threshold(),value=0,s;
         int state = ant.State,S=0,count=0;
@@ -322,7 +358,6 @@ public class normal {
         if(state==0&&grand[Y][X]!=0)
             state=grand[Y][X];
 
-        
         for(int y=ant.Location.y-Range;y<=ant.Location.y+Range;y++)
             for(int x=ant.Location.x-Range;x<=ant.Location.x+Range;x++){
                 if((y>=0&&y<MAX_size)&&(x>=0&&x<MAX_size)){
@@ -333,9 +368,8 @@ public class normal {
                     S++;
                 }
             }
-        for(int i=0;i<count;i++){            
-            value = EuclideanLenght(List.get(i).x,List.get(i).y,X,Y);
-            result += 1-value/T;
+        for(int i=0;i<count;i++){
+            result += 1-(EuclideanLenght(List.get(i).x,List.get(i).y,X,Y)/T);
         }
         //蟻が知覚できる範囲のマスで割る
         return Math.max(0, result/S);
@@ -346,6 +380,7 @@ public class normal {
         return 5.0;
         //A*(1+2/3)=5/3*1/2=5/6
     }
+    /*
     private Memory set_memory(Memory M, Point P,int State) {
         for(int i=0;i<=M.number;i++)
             if(M.state[i]==State){
@@ -370,5 +405,5 @@ public class normal {
         }
         return -1;
     }
-
+*/
 }

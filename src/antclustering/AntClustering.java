@@ -12,7 +12,7 @@ public class AntClustering {
     static int object = 200;
     static int kind =  3;
     static int ant = 300;
-    static int iteration = 100000;
+    static int iteration = 1000000;
     static int limittime = 4;
     
     
@@ -23,9 +23,10 @@ public class AntClustering {
         local_initial(field2);
         System.out.println("\n終了");
     }
-    
+    //置いた場所を記憶させそこに進むようにする。
+    //置いた場所からある程度距離が離れている場合は置かないようにする。
     public static void local_initial_parameters(Field field){     
-        field.set(size,object,kind,ant,iteration,limittime);
+        field.set(size,object,kind,100,iteration,limittime);
         field.Fieldset();
         System.out.println("配置完了");
 //        grand.Check();
@@ -36,8 +37,9 @@ public class AntClustering {
         System.out.println("\n/****************************************************************************/");
         field.Check();
     }
+    //クリティカルパスを見つける。
     public static void local_initial(normal field){     
-        field.set(size,object,kind,100,iteration/100,limittime);
+        field.set(size,object,kind,100,iteration,limittime);
         field.Fieldset();
         System.out.println("配置完了");
 //        grand.Check();
