@@ -52,8 +52,8 @@ public class normal {
     public static ant[] ant;
     //閾値
     static final double A = 1;
-    static final double K1 = 0.2;
-    static final double K2 = 0.3;
+    static final double Kp = 1;
+    static final double Kd = 0.3;
     static int Range = 2;
     static double V = 2;
     static final int Memory_size = 6;   
@@ -82,7 +82,7 @@ public class normal {
         MAX_size = size;
         MAX_object = object;
 //        MAX_kind = kind;
-        MAX_kind = 1;
+        MAX_kind = kind;
         MAX_ant = ant;
         MAX_state = kind*2+1;
         ANT = kind +1;
@@ -188,23 +188,24 @@ public class normal {
             
         }
         System.out.println("\r ");   
-    }/*
+    }
     private double Ppick(double F){
-        return Math.pow(K1/(K1+F), 2);
+        return Math.pow(1-F, 2);
+//        return Math.pow(Kp/(Kp+F), 2);
     }
     private double Pdrop(double F){
-        if(F<K2)
+/*        if(F<Kd)
             return 2*F;
         else
-            return 1.00;
-    }*/
-    static double K=0.9;
+            return 1.00;*/
+        return Math.pow(F, 2);
+    }/*
     private double Ppick(double F){        
-        return Math.pow(K1/(K1+F), 2);
+        return Math.pow(2/(2+F), 2);
     }
     private double Pdrop(double F){
-        return Math.pow(F/(K2+F), 2);
-    }
+        return Math.pow(F/(2+F), 2);
+    }*/
     //**********************************************************************************************//    
     //***配置状態の表示(蟻有)***//
     public void Check(){    
@@ -351,28 +352,35 @@ public class normal {
     }
     //困った クリパ必須
     private double f(ant ant,int[][] grand) {
-        double result = 0,T=Threshold(),value=0,s;
-        int state = ant.State,S=0,count=0;
+        double result = 0,T=Threshold(),value=0,lenght;
+        int state = ant.State,count=0,S=0;
         int X = ant.Location.x,Y = ant.Location.y;
         ArrayList<G> List=new ArrayList<G>();
+        //蟻が何も持っていないときはその場に落ちているもので判断
         if(state==0&&grand[Y][X]!=0)
             state=grand[Y][X];
-
+        //ある範囲内での類似度の計算
         for(int y=ant.Location.y-Range;y<=ant.Location.y+Range;y++)
             for(int x=ant.Location.x-Range;x<=ant.Location.x+Range;x++){
                 if((y>=0&&y<MAX_size)&&(x>=0&&x<MAX_size)){
-                    if(grand[y][x]==state){
-                        List.add(new G(grand[y][x],x,y));
-                        count++;
+                    lenght = EuclideanLenght(x,y,X,Y);
+                    //類似度の計算
+                    if(grand[y][x]==state&&lenght!=0){
+                        result += 1-lenght/T;
+//                        S++
+                    }else if(grand[y][x]==state&&lenght==0){
+                        result += 1;
                     }
-                    S++;
+                    //最大値の計算
+                    if(lenght==0)
+                        value +=1;
+                    else
+                        value += 1-lenght/T;
                 }
             }
-        for(int i=0;i<count;i++){
-            result += 1-(EuclideanLenght(List.get(i).x,List.get(i).y,X,Y)/T);
-        }
         //蟻が知覚できる範囲のマスで割る
-        return Math.max(0, result/S);
+//        return Math.max(0, result/S);
+        return Math.max(0, result/value);
     }
     //閾値
     private double Threshold(){

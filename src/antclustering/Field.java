@@ -129,7 +129,6 @@ public class Field {
             for(int an=0;an<MAX_ant;an++){
                 x = ant[an].Location.x;
                 y = ant[an].Location.y;
-//                double F = grand.Neight(ant[an],Range);
                 //持ち上げられる状態か
                 if(antOperation.pick(ant[an],antClone[an],grand,i,x,y));
                 //降ろせる状態か
@@ -140,8 +139,8 @@ public class Field {
             grand.resetState();
             //ランダム移動
             M.wander(i,ant,grand);
-            grand.setPheromone(ant);
-            grand.lostP();
+//            grand.setPheromone(ant);
+//            grand.lostP();
         }
         System.out.println("\r ");
     }
@@ -260,112 +259,6 @@ public class Field {
         int y = ant[an].Location.y;
         
         return ("("+x+","+y+")") ;
-    }
-//**********************************************************************************************//
-    //***蟻の移動　ランダム***//
-    public void wander(int i){   
-        //蟻すべてがランダムに移動
-        int an=0;
-        for(;an<ant_E;an++){
-            //移動が完了するまで
-            if(ant[an].time < limitMoveTime){
-                Moves(ant[an]);
-            }else{
-                Moves2(ant[an]);
-            }
-        }
-        grand.C=antOperation.PAround(grand.pheromone);
-        for(;an<MAX_ant;an++){
-            if(ant[an].State!=0&&i>HalfIteration){
-                Carry(ant[an]);
-            }else if(ant[an].time < limitMoveTime){
-                Move(ant[an]);
-            }else{
-                Move2(ant[an]);
-            }
-        }
-    }
-    //***ランダム移動***//
-    public void Move(ant an){
-        int k,x,y,count=0;
-        Random rnd = new Random();
-        while(count<30){
-            count++;
-            k = rnd.nextInt(M.move_x[8].length);
-            x = an.old.x + M.move_x[8][k];
-            y = an.old.y + M.move_y[8][k];
-            //移動先が存在する
-            if(grand.MovingANT(x, y, an))
-                break;
-        }        
-    }
-    public void Move2(ant an){
-        int k,x,y,count=0;
-        Random rnd = new Random();
-        while(count<40){
-                count++;
-                k = rnd.nextInt(moveX.length);
-                x = an.old.x + moveX[k];
-                y = an.old.y + moveY[k];
-                if(grand.MovingANT(x, y, an))
-                    break;
-            }
-    }
-    public void Moves(ant an){
-        int k,x,y,count=0;
-        int[] Q = antOperation.RandomQ(an, grand.ant,1);
-        if(Q[0]!=-1){
-            Random rnd = new Random();
-            k = Q[rnd.nextInt(Q.length)];
-        }
-        else{
-            Move(an);
-            return;
-        }
-        x = an.old.x + M.move_x[8][k];
-        y = an.old.y + M.move_y[8][k];
-        if(grand.MovingANT(x, y, an))
-            return;
-    }
-    public void Moves2(ant an){
-        int k,x,y,count=0;
-        int[] Q = antOperation.RandomQ(an, grand.ant,2);
-        if(Q[0]!=-1){
-            Random rnd = new Random();
-            k = Q[rnd.nextInt(Q.length)];
-        }
-        else{
-            Moves(an);
-            return;
-        }
-        x = an.old.x + M.move_X[8][k];
-        y = an.old.y + M.move_Y[8][k];
-        //移動先が存在する
-        if(grand.MovingANT(x, y, an))
-            return;
-    }
-    //***物を持っている時***//
-    public void Carry(ant an){
-        int k,x,y,count=0;
-        Random rnd = new Random();
-        int Q = antOperation.CarryAround(an, grand.C);
-        while(count<30){
-            count++;
-            k = rnd.nextInt(M.move_x[Q].length);
-            x = an.old.x + M.move_x[Q][k];
-            y = an.old.y + M.move_y[Q][k];
-            //移動先が存在する
-            if((x>0&&x<MAX_size)&&(y>0&&y<MAX_size)){
-                //以前の位置から蟻を削除                   
-                //蟻の移動
-                Point P  = an.old;
-                an.Move(x, y);
-                //移動後の位置に蟻を追加
-                grand.resetAnt(an,P);
-                //ループ強制抜け
-                break;
-            }
-        }        
     }
 //**********************************************************************************************//
 }
