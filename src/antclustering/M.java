@@ -1,7 +1,6 @@
 
 package antclustering;
 
-import static antclustering.Field.limitMoveTime;
 import java.awt.Point;
 import java.util.Random;
 
@@ -34,22 +33,23 @@ public class M {
     public static void wander(int i,ant[] ant,Grand grand){   
         //蟻すべてがランダムに移動
         int an=0;
-        for(;an<Field.ant_E;an++){
+        for(;an<Data.ant_E;an++){
             //移動が完了するまで
-            if(ant[an].time < Field.limitMoveTime){
+            if(ant[an].time < Data.limitMoveTime){
                 Moves(ant[an],grand);
             }else{
                 Moves2(ant[an],grand);
             }
         }
     //    grand.C=antOperation.PAround(grand.pheromone);
-        for(;an<Field.MAX_ant;an++){
-            if(ant[an].State!=0&&i>Field.HalfIteration){
+        for(;an<Data.MAX_ant;an++){
+/*            if(ant[an].State!=0&&i>Field.HalfIteration){
                 Carry(ant[an],grand);
-            }else if(ant[an].time < Field.limitMoveTime){
-                Move(ant[an],grand);
+            }else 
+*/            if(ant[an].time < Data.limitMoveTime){
+                Moves(ant[an],grand);
             }else{
-                Move2(ant[an],grand);
+                Moves2(ant[an],grand);
             }
         }
     }
@@ -82,14 +82,14 @@ public class M {
     }
     //***他の蟻を避ける移動***//
     public static void Moves(ant an,Grand grand){
-        int k,x,y,count=0;
+        int k,x,y;
         int[] Q = antOperation.RandomQ(an, grand.ant,1);
         if(Q[0]!=-1){
             Random rnd = new Random();
             k = Q[rnd.nextInt(Q.length)];
         }
         else{
-            Move(an,grand);
+//            Move(an,grand);
             return;
         }
         x = an.old.x + M.move_x[8][k];
@@ -99,14 +99,14 @@ public class M {
     }
     //***他の蟻を避ける移動　距離2***//
     public static void Moves2(ant an,Grand grand){
-        int k,x,y,count=0;
+        int k,x,y;
         int[] Q = antOperation.RandomQ(an, grand.ant,2);
         if(Q[0]!=-1){
             Random rnd = new Random();
             k = Q[rnd.nextInt(Q.length)];
         }
         else{
-            Moves(an,grand);
+//            Move2(an,grand);
             return;
         }
         x = an.old.x + M.move_X[8][k];
@@ -127,7 +127,7 @@ public class M {
             x = an.old.x + M.move_x[Q][k];
             y = an.old.y + M.move_y[Q][k];
             //移動先が存在する
-            if((x>0&&x<Field.MAX_size)&&(y>0&&y<Field.MAX_size)){
+            if((x>0&&x<Data.MAX_size)&&(y>0&&y<Data.MAX_size)){
                 //以前の位置から蟻を削除                   
                 //蟻の移動
                 Point P  = an.old;

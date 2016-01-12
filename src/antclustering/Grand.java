@@ -1,7 +1,6 @@
 
 package antclustering;
 
-import static antclustering.Field.MAX_size;
 import java.awt.Point;
 
 
@@ -82,9 +81,9 @@ public class Grand {
             object = state[y][x];
         //蟻が認識する範囲(XからXendまで、YからYendまで)
         X = Math.max(0,x-Range);
-        Xend = Math.min(x+Range,Field.MAX_size);
+        Xend = Math.min(x+Range,Data.MAX_size);
         Y = Math.max(0,y-Range);
-        Yend = Math.min(y+Range,Field.MAX_size);
+        Yend = Math.min(y+Range,Data.MAX_size);
         //同一オブジェクト同士の類似
         for(int i =X ;i<Xend;i++)
             for(int j = Y;j<Yend;j++){
@@ -113,9 +112,9 @@ public class Grand {
         
         //蟻が認識する範囲
         X = Math.max(0,x-R);
-        Xend = Math.min(x+R,Field.MAX_size-1);
+        Xend = Math.min(x+R,Data.MAX_size-1);
         Y = Math.max(0,y-R);
-        Yend = Math.min(y+R,Field.MAX_size-1);
+        Yend = Math.min(y+R,Data.MAX_size-1);
         //同一オブジェクト同士の類似
         for(int i =X ;i<=Xend;i++)
             for(int j = Y;j<=Yend;j++){
