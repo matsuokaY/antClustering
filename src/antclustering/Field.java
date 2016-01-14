@@ -72,12 +72,6 @@ public class Field {
                     M.Moves2(ant[an],grand);
                 
             }
-            //state,antの更新
-
-            //ランダム移動
-//            M.wander(i,ant,grand);
-//            grand.setPheromone(ant);
-//            grand.lostP();
         }
         System.out.println("\r ");
     }
