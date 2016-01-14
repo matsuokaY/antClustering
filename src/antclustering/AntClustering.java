@@ -18,14 +18,25 @@ public class AntClustering {
     
     public static void main(String[] args) {
         Data data= new Data();
-        Data data2=new Data();
+        Data data2 = new Data();
         data.set(size, object, kind, ant, iteration, limittime);
         data.Fieldset();
-        data2 = data.clone();
-        normal.local_initial_parameters(Data.grand,Data.ant);
+        data2.clone(data);
+        System.out.println(data==data2);
         System.out.println("/****************************************************************************/");
-        Field.local_initial(Data.grand,Data.ant);
+    //    normal.local_initial_parameters(data);
+        System.out.println("/****************************************************************************/");
+        Field.local_initial(data2);
         System.out.println("\n終了");
+    }
+    public static void print(Data data){
+        for (int[] loop : data.grand.state) {
+            for (int j = 0; j<data.grand.state.length; j++) {
+                System.out.print(loop[j] + " ");   
+            }
+            System.out.println("");
+        }
+        
     }
 
 }

@@ -1,7 +1,6 @@
 
 package antclustering;
 
-import static antclustering.Data.Iteration;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Random;
@@ -51,8 +50,31 @@ class G{
     }
 }
 public class normal {
-    public static void local_initial_parameters(Grand grand,ant[] ant){
+    static int Range = 2;
+    
+    static Grand grand ;
+    //蟻
+    static int ant_E;
+    static ant[] ant; 
+    //*****************************************************************************//
+    static int MAX_size;
+    static int MAX_object;
+    static int MAX_kind;
+    static int MAX_state;
+    static int MAX_ant;
+    static int ANT;
+    //繰り返し回数
+    static int Iteration;
+    static int limitMoveTime;
+    static int limitKeepTime;
+    static int limitCount;
+    //繰り返し回数の半分
+    static int HalfIteration;
+    //繰り返し回数の三分の一
+    static int ThirdIteration;    
+    public static void local_initial_parameters(Data data){
 //        grand.Check();
+        setData(data);
         NotAntCheck(grand);
         System.out.println("\nクラスタリング開始");
         Clustering(grand,ant);
@@ -63,6 +85,7 @@ public class normal {
 
     public static void Clustering(Grand grand,ant[] ant) {
         int Memo=0;
+        grand.set(MAX_size);
         Random rnd = new Random();
         //「Interation」の数だけ繰り返し
         for(int t=0;t<Iteration;t++){
@@ -110,32 +133,21 @@ public class normal {
     }
     private static double Ppick(double F){
         return Math.pow(1-F, 2);
-//        return Math.pow(Kp/(Kp+F), 2);
     }
     private static double Pdrop(double F){
-/*        if(F<Kd)
-            return 2*F;
-        else
-            return 1.00;*/
         return Math.pow(F, 2);
-    }/*
-    private double Ppick(double F){        
-        return Math.pow(2/(2+F), 2);
     }
-    private double Pdrop(double F){
-        return Math.pow(F/(2+F), 2);
-    }*/
     //**********************************************************************************************//    
     //***配置状態の表示(蟻有)***//
     public static void Check(Grand grand,ant[] ant){    
-        int object[]=new int[Data.MAX_kind+1];
-        int object2[]=new int[Data.ANT];
-        int[][] A = new int[Data.MAX_size][Data.MAX_size],B = new int[Data.MAX_size][Data.MAX_size];
+        int object[]=new int[MAX_kind+1];
+        int object2[]=new int[ANT];
+        int[][] A = new int[MAX_size][MAX_size],B = new int[MAX_size][MAX_size];
 //        for(int k=0;k<(int)(MAX_ant*0.2);k++){
-        for(int k =0 ;k<Data.MAX_ant;k++){
+        for(int k =0 ;k<MAX_ant;k++){
             A[ant[k].Location.y][ant[k].Location.x]++;
         }
-        for(int k=0;k<Data.MAX_ant;k++){
+        for(int k=0;k<MAX_ant;k++){
             if(ant[k].State!=0)
                 B[ant[k].Location.y][ant[k].Location.x]=ant[k].State;
         }
@@ -159,7 +171,7 @@ public class normal {
                 System.out.print(A[i][j]+" ");
             }
             System.out.print("        ");
-            //要素を持っている蟻
+            //置かれていない要素
             for(int j=0;j<grand.state.length;j++){
                 System.out.print(B[i][j]+" ");
             }
@@ -168,7 +180,7 @@ public class normal {
         }
         System.out.println("");
         //オブジェクトを持ち上げている蟻の表示
-        for(int an=0;an<Data.MAX_ant;an++){
+        for(int an=0;an<MAX_ant;an++){
             if(ant[an].State!=0){
                 System.out.println("antNo."+(an+1)+" ("+ant[an].Location.x+","+ant[an].Location.y+") = "+ant[an].State);
                 object2[ant[an].State]++;
@@ -176,7 +188,7 @@ public class normal {
         }
         for(int b=1;b<object.length;b++)
             System.out.println("object "+b+" = "+object[b]);
-        for(int b=0;b<=Data.MAX_kind;b++)
+        for(int b=0;b<=MAX_kind;b++)
             if(object2[b]!=0)
                 System.out.println(b+" objectを持つあり = "+object2[b]);
     }
@@ -198,8 +210,8 @@ public class normal {
         }       
     }
     public static void CheckAnt2(Grand grand,ant[] ant){
-        int[][] A = new int[Data.MAX_size][Data.MAX_size];
-        for(int k=0;k<(int)(Data.MAX_ant*0.2);k++){
+        int[][] A = new int[MAX_size][MAX_size];
+        for(int k=0;k<(int)(MAX_ant*0.2);k++){
             A[ant[k].Location.y][ant[k].Location.x]++;
         }
         for (int i=0;i<grand.state.length;i++) {
@@ -212,7 +224,7 @@ public class normal {
     }
     //***表示***//
     public static void Print(int i,Grand grand){
-        if(i==Data.ThirdIteration){
+        if(i==ThirdIteration){
                 System.out.print("\r");
                 NotAntCheck(grand);
                 System.out.println("Change");
@@ -221,10 +233,10 @@ public class normal {
             else if(Iteration>=1000000&&i==0){
                 System.out.print("\r");
                 System.out.print("--------------------"+i+"--------------------");
-            }else if(i%Data.limitCount==0){
+            }else if(i%limitCount==0){
                 System.out.print("\r");
                 System.out.print("--------------------"+i+"--------------------");
-            }else if(i==(Data.limitCount-1)){
+            }else if(i==(limitCount-1)){
                 System.out.print("\r");
             }
     }
@@ -247,9 +259,9 @@ public class normal {
         if(state==0&&grand[Y][X]!=0)
             state=grand[Y][X];
         //ある範囲内での類似度の計算
-        for(int y=ant.Location.y-Data.Range;y<=ant.Location.y+Data.Range;y++)
-            for(int x=ant.Location.x-Data.Range;x<=ant.Location.x+Data.Range;x++){
-                if((y>=0&&y<Data.MAX_size)&&(x>=0&&x<Data.MAX_size)){
+        for(int y=ant.Location.y-Range;y<=ant.Location.y+Range;y++)
+            for(int x=ant.Location.x-Range;x<=ant.Location.x+Range;x++){
+                if((y>=0&&y<MAX_size)&&(x>=0&&x<MAX_size)){
                     lenght = EuclideanLenght(x,y,X,Y);
                     //類似度の計算
                     if(grand[y][x]==state&&lenght!=0){
@@ -274,5 +286,28 @@ public class normal {
 //        return A*(1+(V-1)/V);
         return 5.0;
         //A*(1+2/3)=5/3*1/2=5/6
+    }
+
+    private static void setData(Data data) {
+        grand = data.grand;
+    //蟻
+        ant_E = data.ant_E;
+        ant = data.ant.clone(); 
+    //*****************************************************************************//
+        MAX_size = data.MAX_size;
+        MAX_object = data.MAX_object;
+        MAX_kind = data.MAX_kind;
+        MAX_state = data.MAX_state;
+        MAX_ant = data.MAX_ant;
+        ANT = data.ANT;
+    //繰り返し回数
+        Iteration = data.Iteration;
+        limitMoveTime = data.limitMoveTime;
+        limitKeepTime = data.limitKeepTime;
+        limitCount = data.limitCount;
+    //繰り返し回数の半分
+        HalfIteration = data.HalfIteration;
+    //繰り返し回数の三分の一
+        ThirdIteration = data.ThirdIteration; 
     }
 }

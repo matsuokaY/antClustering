@@ -24,10 +24,10 @@ public class antOperation {
     //***周りがpickCount以下なら持ち上げる***//
     public static boolean pickObject(int an,int iteration){
         //三分の一
-        if(iteration<Data.ThirdIteration)
+        if(iteration<Field.ThirdIteration)
             return an<=pickCount-1;
         //三分の二
-        else if(iteration<Data.ThirdIteration*2)
+        else if(iteration<Field.ThirdIteration*2)
             return an<=pickCount;
         //残り
         else
@@ -35,9 +35,9 @@ public class antOperation {
     }
     //***周りがpickCount以上なら降ろす***//
     public static boolean dropObject(int an,int iteration){
-        if(iteration<Data.ThirdIteration)
+        if(iteration<Field.ThirdIteration)
             return an>=pickCount-1;
-        else if(iteration<Data.ThirdIteration*2)
+        else if(iteration<Field.ThirdIteration*2)
             return an>=pickCount;
         else
             return an>=pickCount;
@@ -66,129 +66,7 @@ public class antOperation {
     static boolean has_object(Point P,int[][] A) {
         return A[P.y][P.x]!=0;
     }
-    //**********************************************************************************************//
-    //周りにある要素の中から最も多い要素を返す。
-    public static result AroundState(ant ant, int[][] A){
-        int x = ant.Location.x,y = ant.Location.y,X,Y,Xend,Yend;
-        //蟻が認識する範囲
-        X = Math.max(0,x-r);
-        Xend = Math.min(x+r,Data.MAX_size-1);
-        Y = Math.max(0,y-r);
-        Yend = Math.min(y+r,Data.MAX_size-1);
-        int[] state = new int[Data.MAX_kind+1];
-        for(int i=X;i<Xend;i++){
-            for(int j=Y;j<Yend;j++){
-                if(A[j][i]!=0){
-                    state[A[j][i]]++;
-                    if(i==x&&j==y)
-                        state[A[j][i]]+=2;
-                }
-            }
-        }
-        result result = new result();
-        result.state=0;
-        for(int i=1;i<state.length;i++)
-            if(state[i]>state[result.state]){
-                result.state=i;
-                result.value=state[i];
-            }
-        return result;
-    }
-    //周辺n*nから蟻が多い方向(8方向)を見つける  n=R*2+1 R-rの範囲
-    public static int Around(ant ant,int[][] A){
-        int x = ant.Location.x,
-            y = ant.Location.y,X,Y,Xend,Yend,result=0;
-        int[] k = new int[8];
-        //蟻が認識する範囲
-        X = Math.max(0,x-R);
-        Xend = Math.min(x+R,Data.MAX_size-1);
-        Y = Math.max(0,y-R);
-        Yend = Math.min(y+R,Data.MAX_size-1);
-        //同一オブジェクト同士の類似
-        for(int i=X;i<Xend;i++){
-            for(int j=Y;j<Yend;j++){
-                if(i<x-r&&j<y-r&&0<A[j][i])
-                        k[0] += A[j][i];
-                else if(i<x+r&&j<y-r&&0<A[j][i])
-                    k[1] += A[j][i];
-                else if(i<Xend&&j<y-r&&0<A[j][i])
-                    k[2] += A[j][i];
-                else if(i<x-r&&j<y+r&&0<A[j][i])
-                    k[3] += A[j][i];
-                else if(i<Xend&&j<y+r&&0<A[j][i])
-                    k[4] += A[j][i];
-                else if(i<x-r&&j<Yend&&0<A[j][i])
-                    k[5] += A[j][i];
-                else if(i<x+r&&j<Yend&&0<A[j][i])
-                    k[6] += A[j][i];
-                else if(i<Xend&&j<Yend)
-                    k[7] += A[j][i];
-            }
-        }
-        for(int i=1;i<k.length-1;i++)
-            if(k[result]<k[i])
-                result = i;
-        return result;
-        
-    }
-    //各フェロモンの最も高い濃度のところをの値と位置を返す
-    public static C[] PAround(double[][][] A){
-        C result[] = new C[Data.MAX_kind];
-        for(int k=0;k<result.length;k++){
-            result[k] = new C();
-            for(int i=0;i<A[k].length;i++){
-                for(int j=0;j<A[k][i].length;j++){
-                    if(result[k].value<A[k+1][i][j]){
-                        result[k].value=A[k+1][i][j];
-                        result[k].x = i;
-                        result[k].y = j;
-                    }
-                }
-            }
-        }
-        return result;
-    }
-    //運ぶ時に向かうべきでない方向を見つける
-    public static int CarryAround(ant ant,C[] C){
-        /***********/
-        /* 0  1  2 */
-        /* 3  a  4 */
-        /* 5  6  7 */
-        /***********/
-        int result=0;
-        if(ant.Location.x<C[ant.State].x&&ant.Location.y<C[ant.State].y)
-            result = 7;
-        else if(ant.Location.x<C[ant.State].x&&ant.Location.y>C[ant.State].y)
-            result = 2;
-        else if(ant.Location.x>C[ant.State].x&&ant.Location.y<C[ant.State].y)
-            result = 5;
-        else if(ant.Location.x>C[ant.State].x&&ant.Location.y>C[ant.State].y)
-            result = 0;
-        return result;
-    }
-    public static int CarryAround2(ant ant,Grand grand,int Re){
-        int result=0,state=ant.State,x=ant.Location.x,y=ant.Location.y,count=0;
-        double[] value = new double[9];
-        for(int j=y-Re;j<=y+Re;j++){
-                for(int i=x-Re;i<=x+Re;i++){
-                    if(i>=0&&i<grand.state.length&&j>=0&&j<grand.state.length)
-                        value[count] = grand.pheromone[state][j][i];
-                    else
-                        value[count] = -1;
-                    count++;
-                }
-        }
-        for(int i=1;i<value.length;i++){
-            if(value[result]<value[i])
-                result=i;
-        }
-        if(result==4)
-            result =-1;
-        else if(result>3)
-            result -=1;
-
-        return result;
-    }
+    //**********************************************************************************************//    
     //進むべき方向の選択肢決め(マスが0の方向へ)
     public static int[] RandomQ(ant ant,int[][] A,int Re){
         int[] value = new int[4*Re*Re+4*Re];

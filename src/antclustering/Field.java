@@ -1,14 +1,35 @@
 package antclustering;
 
-import java.awt.Point;
 import static antclustering.antOperation.has_object;
 import static antclustering.antOperation.is_carryingObject;
 import static antclustering.antOperation.is_cellEmpty;
 import static antclustering.antOperation.is_unloading;
 
 public class Field {
-    public static void local_initial(Grand grand,ant[] ant){     
+    static Grand grand ;
+    //蟻
+    static int ant_E;
+    static ant[] ant; 
+    //*****************************************************************************//
+    static int MAX_size;
+    static int MAX_object;
+    static int MAX_kind;
+    static int MAX_state;
+    static int MAX_ant;
+    static int ANT;
+    //繰り返し回数
+    static int Iteration;
+    static int limitMoveTime;
+    static int limitKeepTime;
+    static int limitCount;
+    //繰り返し回数の半分
+    static int HalfIteration;
+    //繰り返し回数の三分の一
+    static int ThirdIteration;    
+    
+    public static void local_initial(Data data){     
 //        grand.Check();
+        setData(data);
         NotAntCheck(grand);
         System.out.println("\nクラスタリング開始");
         Clustering(grand,ant);
@@ -21,13 +42,14 @@ public class Field {
     //***クラスタリングの実行***//
     public static void Clustering(Grand grand,ant[] ant){
         int x,y;
+        grand.set(MAX_size);
         //「Interation」の数だけ繰り返し
-        for(int i=0;i<Data.Iteration;i++){
+        for(int i=0;i<Iteration;i++){
             //回数表示
             Print(i,grand);           
             //クローンの作成
             //すべての蟻で実行
-            for(int an=0;an<Data.MAX_ant;an++){
+            for(int an=0;an<MAX_ant;an++){
                 //蟻の行動
                 if(is_carryingObject(ant[an])&&is_cellEmpty(ant[an].Location,grand.state))
                     if(antOperation.dropObject(grand.AroundR(ant[an],1),i)){
@@ -44,7 +66,7 @@ public class Field {
                     }else
                         ant[an].time++;
                 //蟻の移動
-                if(ant[an].time < Data.limitMoveTime)
+                if(ant[an].time < limitMoveTime)
                     M.Moves(ant[an],grand);
                 else
                     M.Moves2(ant[an],grand);
@@ -62,10 +84,10 @@ public class Field {
 //**********************************************************************************************//    
     //***配置状態の表示(蟻有)***//
     public static void Check(Grand grand,ant[] ant){    
-        int object[]=new int[Data.MAX_kind+1];
-        int object2[]=new int[Data.ANT];
-        int[][] A = new int[Data.MAX_size][Data.MAX_size];
-        for(int k=0;k<(int)(Data.MAX_ant*0.2);k++){
+        int object[]=new int[MAX_kind+1];
+        int object2[]=new int[ANT];
+        int[][] A = new int[MAX_size][MAX_size];
+        for(int k=0;k<(int)(MAX_ant*0.2);k++){
             A[ant[k].Location.y][ant[k].Location.x]++;
         }
         for (int i=0;i<grand.state.length;i++) {
@@ -91,7 +113,7 @@ public class Field {
         System.out.println("");
 //        CheckP();
         //オブジェクトを持ち上げている蟻の表示
-        for(int an=0;an<Data.MAX_ant;an++){
+        for(int an=0;an<MAX_ant;an++){
             if(ant[an].State!=0){
                 System.out.println("antNo."+(an+1)+" ("+ant[an].Location.x+","+ant[an].Location.y+") = "+ant[an].State);
                 object2[ant[an].State]++;
@@ -99,7 +121,7 @@ public class Field {
         }
         for(int b=1;b<object.length;b++)
             System.out.println("object "+b+" = "+object[b]);
-        for(int b=0;b<=Data.MAX_kind;b++)
+        for(int b=0;b<=MAX_kind;b++)
             if(object2[b]!=0)
                 System.out.println(b+" objectを持つあり = "+object2[b]);
     }
@@ -121,8 +143,8 @@ public class Field {
         }       
     }
     public static void CheckAnt2(Grand grand,ant[] ant){
-        int[][] A = new int[Data.MAX_size][Data.MAX_size];
-        for(int k=0;k<(int)(Data.MAX_ant*0.2);k++){
+        int[][] A = new int[MAX_size][MAX_size];
+        for(int k=0;k<(int)(MAX_ant*0.2);k++){
             A[ant[k].Location.y][ant[k].Location.x]++;
         }
         for (int i=0;i<grand.state.length;i++) {
@@ -135,7 +157,7 @@ public class Field {
     }
     public static void CheckP(Grand grand){
         for(int i=0;i<grand.state.length;i++){
-            for(int k=1;k<=Data.MAX_kind;k++){
+            for(int k=1;k<=MAX_kind;k++){
                 for(int j=0;j<grand.state.length;j++){
                     int word = (int) (grand.pheromone[k][i][j]);
                     System.out.print(word + " ");
@@ -147,19 +169,19 @@ public class Field {
     }
     //***表示***//
     public static void Print(int i,Grand grand){
-        if(i==Data.ThirdIteration){
+        if(i==ThirdIteration){
                 System.out.print("\r");
                 NotAntCheck(grand);
                 System.out.println("Change");
                 System.out.print("--------------------"+i+"--------------------");
             }
-            else if(Data.Iteration>=1000000&&i==0){
+            else if(Iteration>=1000000&&i==0){
                 System.out.print("\r");
                 System.out.print("--------------------"+i+"--------------------");
-            }else if(i%Data.limitCount==0){
+            }else if(i%limitCount==0){
                 System.out.print("\r");
                 System.out.print("--------------------"+i+"--------------------");
-            }else if(i==(Data.limitCount-1)){
+            }else if(i==(limitCount-1)){
                 System.out.print("\r");
             }
     }
@@ -170,6 +192,27 @@ public class Field {
     }
 
 //**********************************************************************************************//
-
+    private static void setData(Data data) {
+        grand = data.grand;
+    //蟻
+        ant_E = data.ant_E;
+        ant = data.ant.clone(); 
+    //*****************************************************************************//
+        MAX_size = data.MAX_size;
+        MAX_object = data.MAX_object;
+        MAX_kind = data.MAX_kind;
+        MAX_state = data.MAX_state;
+        MAX_ant = data.MAX_ant;
+        ANT = data.ANT;
+    //繰り返し回数
+        Iteration = data.Iteration;
+        limitMoveTime = data.limitMoveTime;
+        limitKeepTime = data.limitKeepTime;
+        limitCount = data.limitCount;
+    //繰り返し回数の半分
+        HalfIteration = data.HalfIteration;
+    //繰り返し回数の三分の一
+        ThirdIteration = data.ThirdIteration; 
+    }
 }
     

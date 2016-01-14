@@ -6,10 +6,10 @@ import java.util.Random;
 
 public class Data {
     //**********************************************************************************************//
-    public static Grand grand ;
+    public Grand grand ;
     //蟻
-    public static int ant_E;
-    public static ant[] ant;
+    public int ant_E;
+    public ant[] ant;
     //閾値
     static final double A = 1;
     static final double Kp = 1;
@@ -18,25 +18,25 @@ public class Data {
     static double V = 2;
     static final int Memory_size = 6;   
     //*****************************************************************************//
-    static int MAX_size;
-    static int MAX_object;
-    static int MAX_kind;
-    static int MAX_state;
-    static int MAX_ant;
-    static int ANT;
+    public int MAX_size;
+    public int MAX_object;
+    public int MAX_kind;
+    public int MAX_state;
+    public int MAX_ant;
+    public int ANT;
     //繰り返し回数
-    static int Iteration;
-    static int limitMoveTime;
-    static int limitKeepTime;
-    static int limitCount;
+    public int Iteration;
+    public int limitMoveTime;
+    public int limitKeepTime;
+    public int limitCount;
     //繰り返し回数の半分
-    static int HalfIteration;
+    public int HalfIteration;
     //繰り返し回数の三分の一
-    static int ThirdIteration;
+    public int ThirdIteration;
     //*****************************************************************************//
     //***数値の初期化***//
     public void set(int size,int object,int kind,int ant,int iteration,int limitmovetime){
-        grand = new Grand();
+        
         MAX_size = size;
         MAX_object = object;
         MAX_kind = kind;
@@ -49,10 +49,12 @@ public class Data {
         limitCount = iteration / 100;
         HalfIteration = iteration/2;
         ThirdIteration = iteration/3;
+        
     }
     //***初期配置を行う***//
     public void Fieldset(){
         Random rnd = new Random();
+        grand = new Grand();
         grand.state = new int[MAX_size][MAX_size];
         grand.ant = new int[MAX_size][MAX_size];
 //        grand.pheromone = new double[MAX_kind+1][MAX_size][MAX_size];
@@ -92,5 +94,42 @@ public class Data {
                 ant_size++;
             }
         }
+    }
+    
+    public void clone(Data data){
+        MAX_size = data.MAX_size;
+        MAX_object = data.MAX_object;
+        MAX_kind = data.MAX_kind;
+        MAX_state = data.MAX_state;
+        MAX_ant = data.MAX_ant;
+        ANT = data.ANT;
+        //繰り返し回数
+        Iteration = data.Iteration;
+        limitMoveTime = data.limitMoveTime;
+        limitKeepTime = data.limitKeepTime;
+        limitCount = data.limitCount;
+        //繰り返し回数の半分
+        HalfIteration = data.HalfIteration;
+        //繰り返し回数の三分の一
+        ThirdIteration = data.ThirdIteration;
+        //*****************************************************************************//
+        grand = new Grand();
+        grand.state = new int[data.MAX_size][data.MAX_size];
+        grand.ant = new int[data.MAX_size][data.MAX_size];
+        ant_E = (int) (data.MAX_ant*0.2);
+        ant = new ant[data.MAX_ant];
+        
+        for(int i=0;i<grand.ant.length;i++)
+            for(int j=0;j<grand.ant.length;j++){
+                grand.ant[i][j]= (int)data.grand.ant[i][j];
+                grand.state[i][j]=(int)data.grand.state[i][j];
+            }
+        for(int k=0;k<ant.length;k++)
+            ant[k]=data.ant[k];
+
+        
+    }
+    public void print(){
+        System.out.println(this.ant.length);
     }
 }

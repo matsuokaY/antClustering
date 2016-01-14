@@ -17,7 +17,11 @@ public class Grand {
     public int[][] ant;
     
     public C[] C;
-   
+    public int MAX_size;
+    public void set(int size){
+        MAX_size = size;
+    }
+    
     public void setState(int x,int y,int kind){
         this.state[y][x] = kind;
     }
@@ -41,19 +45,6 @@ public class Grand {
         return state[y][x] == object;
     }
     //**********************************************************************************************//
-    //***フェロモンの散布***//
-    public void setPheromone(ant[] ant){
-        result S = new result();
-        int R = 3;
-        for(int i=0;i<ant.length;i++){
-//            state = this.state[ant[i].Location.y][ant[i].Location.x];
-            S = antOperation.AroundState(ant[i],this.state);
-            if(S.state!=0&&this.pheromone[S.state][ant[i].Location.y][ant[i].Location.x]<p_max){
-//                this.pheromone[state][ant[i].Location.y][ant[i].Location.x] += p/D(ant[i] , R);
-                this.pheromone[S.state][ant[i].Location.y][ant[i].Location.x] += p/12*S.value;
-            }
-        }
-    }
     public int D(ant ant,int R){
         return (R*2+1)*(R*2+1)-1-AroundR(ant,R);
     }
@@ -81,9 +72,9 @@ public class Grand {
             object = state[y][x];
         //蟻が認識する範囲(XからXendまで、YからYendまで)
         X = Math.max(0,x-Range);
-        Xend = Math.min(x+Range,Data.MAX_size);
+        Xend = Math.min(x+Range,MAX_size);
         Y = Math.max(0,y-Range);
-        Yend = Math.min(y+Range,Data.MAX_size);
+        Yend = Math.min(y+Range,MAX_size);
         //同一オブジェクト同士の類似
         for(int i =X ;i<Xend;i++)
             for(int j = Y;j<Yend;j++){
@@ -112,9 +103,9 @@ public class Grand {
         
         //蟻が認識する範囲
         X = Math.max(0,x-R);
-        Xend = Math.min(x+R,Data.MAX_size-1);
+        Xend = Math.min(x+R,MAX_size-1);
         Y = Math.max(0,y-R);
-        Yend = Math.min(y+R,Data.MAX_size-1);
+        Yend = Math.min(y+R,MAX_size-1);
         //同一オブジェクト同士の類似
         for(int i =X ;i<=Xend;i++)
             for(int j = Y;j<=Yend;j++){
