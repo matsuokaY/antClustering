@@ -13,7 +13,6 @@ public class ant {
     //移動速度
     public double v;
 
-    public Point old;
     public int around;
     public int time;
     public Memory Memory;
@@ -22,7 +21,6 @@ public class ant {
     //***蟻の配置***//
     public void set(int x,int y,int z,int state){
         this.Location = new Point(x,y);
-        this.old = new Point(x,y);
         this.State = state;
         this.No = z;
     }
@@ -39,9 +37,9 @@ public class ant {
     }
     
     public void Move(int x,int y){
-        this.Location.x = x;
-        this.Location.y = y;
-        this.old.x = x;
-        this.old.y = y;
+        Point P = new Point(x,y);
+        this.Location = P;
+//        this.Location.x = x;
+//        this.Location.y = y;
     }
 }

@@ -47,8 +47,6 @@ public class Data {
         limitMoveTime = limitmovetime;
         limitKeepTime = (int) (limitmovetime*1.5);
         limitCount = iteration / 100;
-        HalfIteration = iteration/2;
-        ThirdIteration = iteration/3;
         
     }
     //***初期配置を行う***//
@@ -113,23 +111,32 @@ public class Data {
         //繰り返し回数の三分の一
         ThirdIteration = data.ThirdIteration;
         //*****************************************************************************//
-        grand = new Grand();
-        grand.state = new int[data.MAX_size][data.MAX_size];
-        grand.ant = new int[data.MAX_size][data.MAX_size];
-        ant_E = (int) (data.MAX_ant*0.2);
-        ant = new ant[data.MAX_ant];
+        this.grand = new Grand();
+        this.grand.state = new int[data.MAX_size][data.MAX_size];
+        this.grand.ant = new int[data.MAX_size][data.MAX_size];
+        this.ant_E = (int) (data.MAX_ant*0.2);
+        this.ant = new ant[data.MAX_ant];
         
         for(int i=0;i<grand.ant.length;i++)
             for(int j=0;j<grand.ant.length;j++){
-                grand.ant[i][j]= (int)data.grand.ant[i][j];
-                grand.state[i][j]=(int)data.grand.state[i][j];
+                this.grand.ant[i][j]= (int)data.grand.ant[i][j];
+                this.grand.state[i][j]=(int)data.grand.state[i][j];
             }
-        for(int k=0;k<ant.length;k++)
-            ant[k]=data.ant[k];
-
+        for(int k=0;k<ant.length;k++){
+            this.ant[k] = new ant();
+            this.ant[k].Location = new Point(data.ant[k].Location.x,data.ant[k].Location.y);
+            this.ant[k].Memory = new Memory();
+            this.ant[k].Memory.state = new int[data.ant[k].Memory.state.length];
+            this.ant[k].Memory.P = new Point[data.ant[k].Memory.P.length];
+            for(int l=0;l<data.ant[k].Memory.P.length;l++){
+                this.ant[k].Memory.P[l] = new Point();
+            }
+            this.ant[k].No=data.ant[k].No;
+            this.ant[k].State=data.ant[k].State;
+            this.ant[k].around=data.ant[k].around;
+            this.ant[k].time=data.ant[k].time;
+        }
         
     }
-    public void print(){
-        System.out.println(this.ant.length);
-    }
+
 }

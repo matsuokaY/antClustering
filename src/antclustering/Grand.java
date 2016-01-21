@@ -3,7 +3,7 @@ package antclustering;
 
 import java.awt.Point;
 
-
+//      a[y][x]
 public class Grand {
     //蟻のフェロモン濃度
     public final double p = 1;
@@ -25,9 +25,10 @@ public class Grand {
     public void setState(int x,int y,int kind){
         this.state[y][x] = kind;
     }
-    public void resetAnt(ant an,Point P){
-        setAnt(an.Location.x,an.Location.y);
+    public void resetAnt(Point an,Point P){
         removeAnt(P.x,P.y);
+        setAnt(an.x,an.y);
+
     }
     public void setAnt(int x,int y){
         this.ant[y][x] += 1;
@@ -93,24 +94,13 @@ public class Grand {
     }
     //***周囲(半径R)の物体の数***//
     public int AroundR(ant ant,int R){
-        int x = ant.Location.x,
-            y = ant.Location.y,
-            X,Y,Xend,Yend,count=0,
-            object = ant.State;
+        int count=0,object = ant.State;
         if(object == 0){
-            object = state[y][x];
+            object = state[ant.Location.y][ant.Location.x];
         }
-        
-        //蟻が認識する範囲
-        X = Math.max(0,x-R);
-        Xend = Math.min(x+R,MAX_size-1);
-        Y = Math.max(0,y-R);
-        Yend = Math.min(y+R,MAX_size-1);
-        //同一オブジェクト同士の類似
-        for(int i =X ;i<=Xend;i++)
-            for(int j = Y;j<=Yend;j++){
-                //オブジェクトの一致
-                if(checkObject(i,j,object))
+        for(int y=ant.Location.y-R;y<=ant.Location.y+R;y++)
+            for(int x=ant.Location.x-R;x<=ant.Location.x+R;x++){
+                if((y>=0&&y<this.state.length)&&(x>=0&&x<this.state.length)&&checkObject(x,y,object))
                     count++;
             }
         return count;
@@ -121,10 +111,10 @@ public class Grand {
         if((x>=0&&x<state.length)&&(y>=0&&y<state.length)){
             //以前の位置から蟻を削除                   
             //蟻の移動
-            Point P  = an.old;
+            Point P  = an.Location;
             an.Move(x, y);
             //移動後の位置に蟻を追加
-            resetAnt(an,P);
+            resetAnt(an.Location,P);
             //ループ抜け
             return true;
             }

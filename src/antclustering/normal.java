@@ -2,7 +2,6 @@
 package antclustering;
 
 import java.awt.Point;
-import java.util.ArrayList;
 import java.util.Random;
 import static antclustering.antOperation.is_stayingAnt;
 import static antclustering.antOperation.has_object;
@@ -10,35 +9,7 @@ import static antclustering.antOperation.is_carryingObject;
 import static antclustering.antOperation.is_cellEmpty;
 import static antclustering.antOperation.is_unloading;
 
-class Memory{
-    Point[] P;
-    int[] state;
-    int number;
-    void set_memory(Point P,int State) {
-        for(int i=0;i<=this.number;i++)
-            if(this.state[i]==State){
-                this.P[i]=P;
-                return ;
-            }
-        if(this.number == this.state.length)
-            this.number = 0;
-        this.P[this.number] = P;
-        this.state[this.number]=State;
-        this.number++;
-        return ;
-    }
-    int serch_memory(int State) {
-        int g=0;
-        for(int i=0;i<state.length;i++){
-            g=this.number+i;
-            if(g<state.length&&state[i]==State)
-                return i;
-            else if(g>=state.length&&state[g-state.length]==State)
-                return g-state.length;
-        }
-        return -1;
-    }
-}
+
 class G{
     int x;
     int y;
@@ -57,21 +28,13 @@ public class normal {
     static int ant_E;
     static ant[] ant; 
     //*****************************************************************************//
-    static int MAX_size;
-    static int MAX_object;
     static int MAX_kind;
-    static int MAX_state;
     static int MAX_ant;
     static int ANT;
     //繰り返し回数
     static int Iteration;
-    static int limitMoveTime;
-    static int limitKeepTime;
     static int limitCount;
-    //繰り返し回数の半分
-    static int HalfIteration;
-    //繰り返し回数の三分の一
-    static int ThirdIteration;    
+  
     public static void local_initial_parameters(Data data){
 //        grand.Check();
         setData(data);
@@ -85,14 +48,15 @@ public class normal {
 
     public static void Clustering(Grand grand,ant[] ant) {
         int Memo=0;
-        grand.set(MAX_size);
+        grand.set(grand.state.length);
         Random rnd = new Random();
         //「Interation」の数だけ繰り返し
         for(int t=0;t<Iteration;t++){
             //回数表示
-            Print(t,grand);
+//            Print(t,grand);
             //すべての蟻で実行
             for(int an=0;an<ant.length;an++){
+                //drop
                 if(is_carryingObject(ant[an])&&is_cellEmpty(ant[an].Location,grand.state)){
                     double F = f(ant[an],grand.state);
                     double R = Math.random(),P=Pdrop(F);
@@ -101,9 +65,9 @@ public class normal {
                         grand.state[ant[an].Location.y][ant[an].Location.x]=ant[an].State;
                         ant[an].State=0;
                     }
+                //pick
                 }else if(is_unloading(ant[an])&&has_object(ant[an].Location,grand.state)){
                     double F = f(ant[an],grand.state);
-//                    double R = Math.random()*4+1,P=Ppick(F);
                     double R = Math.random(),P=Ppick(F);
                     if(P>R){
                         ant[an].State=grand.state[ant[an].Location.y][ant[an].Location.x];
@@ -113,7 +77,7 @@ public class normal {
                         if(Memo!=-1&&!grand.MovingANT(ant[an].Memory.P[Memo].x,ant[an].Memory.P[Memo].y, ant[an])){
                             int x = ant[an].Memory.P[Memo].x,y = ant[an].Memory.P[Memo].y;
                             //ジャンプ先予定地に蟻がいなければジャンプ
-                            if(!is_stayingAnt(grand.ant,ant[an].Memory.P[Memo]))
+                            if(is_stayingAnt(grand.ant,ant[an].Memory.P[Memo]))
                                 if(!grand.MovingANT(x,y,ant[an]))
                                     System.out.println("s");
                             else//予定地に方向に向かって移動？ 
@@ -142,23 +106,26 @@ public class normal {
     public static void Check(Grand grand,ant[] ant){    
         int object[]=new int[MAX_kind+1];
         int object2[]=new int[ANT];
-        int[][] A = new int[MAX_size][MAX_size],B = new int[MAX_size][MAX_size];
+        int[][] A = new int[grand.state.length][grand.state.length],B = new int[grand.state.length][grand.state.length];
 //        for(int k=0;k<(int)(MAX_ant*0.2);k++){
-        for(int k =0 ;k<MAX_ant;k++){
+        for(int k =0 ;k<ant.length;k++){
             A[ant[k].Location.y][ant[k].Location.x]++;
         }
-        for(int k=0;k<MAX_ant;k++){
+        for(int k=0;k<ant.length;k++){
             if(ant[k].State!=0)
                 B[ant[k].Location.y][ant[k].Location.x]=ant[k].State;
         }
         for (int i=0;i<grand.state.length;i++) {
             //要素の様子
             for(int j=0;j<grand.state.length;j++){
-                System.out.print(grand.state[i][j] + " ");
                 if(grand.state[i][j]!=0){
+                    System.out.print(grand.state[i][j] + " ");
+                    
                     object[grand.state[i][j]]++;
-                }
-                
+                }else if(B[i][j]!=0)
+                    System.out.print(B[i][j] + " ");
+                else
+                    System.out.print(grand.state[i][j] + " ");
             }
             System.out.print("        ");
             //蟻の様子
@@ -166,7 +133,7 @@ public class normal {
                 System.out.print(grand.ant[i][j] + " ");
             }
             System.out.print("        ");
-            //エージェント蟻の様子
+            //蟻の様子2
             for(int j=0;j<grand.state.length;j++){
                 System.out.print(A[i][j]+" ");
             }
@@ -180,7 +147,7 @@ public class normal {
         }
         System.out.println("");
         //オブジェクトを持ち上げている蟻の表示
-        for(int an=0;an<MAX_ant;an++){
+/*        for(int an=0;an<ant.length;an++){
             if(ant[an].State!=0){
                 System.out.println("antNo."+(an+1)+" ("+ant[an].Location.x+","+ant[an].Location.y+") = "+ant[an].State);
                 object2[ant[an].State]++;
@@ -190,7 +157,7 @@ public class normal {
             System.out.println("object "+b+" = "+object[b]);
         for(int b=0;b<=MAX_kind;b++)
             if(object2[b]!=0)
-                System.out.println(b+" objectを持つあり = "+object2[b]);
+                System.out.println(b+" objectを持つあり = "+object2[b]);*/
     }
     //***配置状態の表示(蟻無)***//
     public static void NotAntCheck(Grand grand){
@@ -210,8 +177,8 @@ public class normal {
         }       
     }
     public static void CheckAnt2(Grand grand,ant[] ant){
-        int[][] A = new int[MAX_size][MAX_size];
-        for(int k=0;k<(int)(MAX_ant*0.2);k++){
+        int[][] A = new int[grand.state.length][grand.state.length];
+        for(int k=0;k<(int)(ant.length*0.2);k++){
             A[ant[k].Location.y][ant[k].Location.x]++;
         }
         for (int i=0;i<grand.state.length;i++) {
@@ -224,10 +191,9 @@ public class normal {
     }
     //***表示***//
     public static void Print(int i,Grand grand){
-        if(i==ThirdIteration){
-                System.out.print("\r");
+        if(i==Iteration/3){
+                System.out.print("\r途中結果\n");
                 NotAntCheck(grand);
-                System.out.println("Change");
                 System.out.print("--------------------"+i+"--------------------");
             }
             else if(Iteration>=1000000&&i==0){
@@ -252,16 +218,14 @@ public class normal {
     //なんとかなった？
     static double f(ant ant,int[][] grand) {
         double result = 0,T=Threshold(),value=0,lenght;
-        int state = ant.State,count=0,S=0;
-        int X = ant.Location.x,Y = ant.Location.y;
-        ArrayList<G> List=new ArrayList<G>();
+        int state = ant.State,X = ant.Location.x,Y = ant.Location.y;
         //蟻が何も持っていないときはその場に落ちているもので判断
         if(state==0&&grand[Y][X]!=0)
             state=grand[Y][X];
         //ある範囲内での類似度の計算
         for(int y=ant.Location.y-Range;y<=ant.Location.y+Range;y++)
             for(int x=ant.Location.x-Range;x<=ant.Location.x+Range;x++){
-                if((y>=0&&y<MAX_size)&&(x>=0&&x<MAX_size)){
+                if((y>=0&&y<grand.length)&&(x>=0&&x<grand.length)){
                     lenght = EuclideanLenght(x,y,X,Y);
                     //類似度の計算
                     if(grand[y][x]==state&&lenght!=0){
@@ -294,20 +258,11 @@ public class normal {
         ant_E = data.ant_E;
         ant = data.ant.clone(); 
     //*****************************************************************************//
-        MAX_size = data.MAX_size;
-        MAX_object = data.MAX_object;
         MAX_kind = data.MAX_kind;
-        MAX_state = data.MAX_state;
         MAX_ant = data.MAX_ant;
         ANT = data.ANT;
     //繰り返し回数
         Iteration = data.Iteration;
-        limitMoveTime = data.limitMoveTime;
-        limitKeepTime = data.limitKeepTime;
         limitCount = data.limitCount;
-    //繰り返し回数の半分
-        HalfIteration = data.HalfIteration;
-    //繰り返し回数の三分の一
-        ThirdIteration = data.ThirdIteration; 
     }
 }

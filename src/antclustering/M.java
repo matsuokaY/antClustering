@@ -37,8 +37,8 @@ public class M {
         while(count<30){
             count++;
             k = rnd.nextInt(M.move_x[8].length);
-            x = an.old.x + M.move_x[8][k];
-            y = an.old.y + M.move_y[8][k];
+            x = an.Location.x + M.move_x[8][k];
+            y = an.Location.y + M.move_y[8][k];
             //移動先が存在する
             if(grand.MovingANT(x, y, an))
                 break;
@@ -51,8 +51,8 @@ public class M {
         while(count<40){
                 count++;
                 k = rnd.nextInt(moveX.length);
-                x = an.old.x + moveX[k];
-                y = an.old.y + moveY[k];
+                x = an.Location.x + moveX[k];
+                y = an.Location.y + moveY[k];
                 if(grand.MovingANT(x, y, an))
                     break;
             }
@@ -61,6 +61,7 @@ public class M {
     public static void Moves(ant an,Grand grand){
         int k,x,y;
         int[] Q = antOperation.RandomQ(an, grand.ant,1);
+        Point P =new Point();
         if(Q[0]!=-1){
             Random rnd = new Random();
             k = Q[rnd.nextInt(Q.length)];
@@ -69,10 +70,10 @@ public class M {
 //            Move(an,grand);
             return;
         }
-        x = an.old.x + M.move_x[8][k];
-        y = an.old.y + M.move_y[8][k];
-        if(grand.MovingANT(x, y, an))
-            return;
+        x = an.Location.x + M.move_x[8][k];
+        y = an.Location.y + M.move_y[8][k];
+        if(!grand.MovingANT(x,y, an))
+            System.out.println("困った");
     }
     //***他の蟻を避ける移動　距離2***//
     public static void Moves2(ant an,Grand grand){
@@ -86,11 +87,12 @@ public class M {
 //            Move2(an,grand);
             return;
         }
-        x = an.old.x + M.move_X[8][k];
-        y = an.old.y + M.move_Y[8][k];
+        x = an.Location.x + M.move_X[8][k];
+        y = an.Location.y + M.move_Y[8][k];
+        
         //移動先が存在する
-        if(grand.MovingANT(x, y, an))
-            return;
+        if(!grand.MovingANT(x, y, an))
+            System.out.println("困った");
     }
 
 }
