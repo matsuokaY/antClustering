@@ -88,7 +88,7 @@ public class Data {
                 for(int i=0;i<Memory_size;i++){
                     ant[ant_size].Memory.P[i] = new Point();
                 }
-                grand.setAnt(object_x,object_y);
+                grand.setAnt(object_x,object_y,ant_size);
                 ant_size++;
             }
         }
@@ -133,7 +133,6 @@ public class Data {
             }
             this.ant[k].No=data.ant[k].No;
             this.ant[k].State=data.ant[k].State;
-            this.ant[k].around=data.ant[k].around;
             this.ant[k].time=data.ant[k].time;
         }
         

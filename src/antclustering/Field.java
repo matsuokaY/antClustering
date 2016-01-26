@@ -7,6 +7,10 @@ import static antclustering.antOperation.is_cellEmpty;
 import static antclustering.antOperation.is_stayingAnt;
 import static antclustering.antOperation.is_unloading;
 import static antclustering.antOperation.pickObject;
+import java.awt.Point;
+
+
+//
 
 public class Field {
     static Grand grand ;
@@ -36,7 +40,9 @@ public class Field {
 //**********************************************************************************************//
     //***クラスタリングの実行***//
     public static void Clustering(Grand grand,ant[] ant){
-        int Memo=0;
+        int Memo;
+        Point P = new Point();
+        
         grand.set(ant.length);
         //「Interation」の数だけ繰り返し
         for(int i=0;i<Iteration;i++){
@@ -75,14 +81,21 @@ public class Field {
 
                             //ジャンプ後一回数移動を試みる
                             M.Moves(ant[an],grand);
+                        }else{
+                            P=antOperation.Memory(grand.ant,ant[an],ant);
+                            if(0<P.x&&0<P.y&&is_stayingAnt(grand.ant,P))
+                                if(!grand.MovingANT(P.x,P.y,ant[an]))
+                                    System.out.println("s");
+                            else if(0<P.x&&0<P.y)//予定地に方向に向かって移動？ 
+                                System.out.println("dame? ("+P.x+","+P.y+") "+grand.state[P.y][P.x]);
+
+                            //ジャンプ後一回数移動を試みる
+                            M.Moves(ant[an],grand);
                         }
                     }else
                         ant[an].time++;
                 //蟻の移動
- //               if(ant[an].time < limitMoveTime)
                     M.Moves(ant[an],grand);
-  //              else
-  //                 M.Moves2(ant[an],grand);
                 
             }
         }
@@ -117,7 +130,12 @@ public class Field {
             System.out.print("        ");
             //蟻の様子
             for(int j=0;j<grand.state.length;j++){
-                System.out.print(grand.ant[i][j] + " ");
+                if(grand.ant[i][j]!=0&&grand.ant[i][j]<10)
+                    System.out.print(0+""+grand.ant[i][j] + " ");
+                else if(grand.ant[i][j]!=0)
+                    System.out.print(grand.ant[i][j] + " ");
+                else
+                    System.out.print(0+""+0 + " ");
             }
             System.out.print("        ");
             //蟻の様子2
@@ -132,7 +150,7 @@ public class Field {
             System.out.println("");
         }
         System.out.println("");
-/*        //オブジェクトを持ち上げている蟻の表示
+        //オブジェクトを持ち上げている蟻の表示
         for(int an=0;an<ant.length;an++){
             if(ant[an].State!=0){
                 System.out.println("antNo."+(an+1)+" ("+ant[an].Location.x+","+ant[an].Location.y+") = "+ant[an].State);
@@ -143,7 +161,7 @@ public class Field {
             System.out.println("object "+b+" = "+object[b]);
         for(int b=0;b<=MAX_kind;b++)
             if(object2[b]!=0)
-                System.out.println(b+" objectを持つあり = "+object2[b]);*/
+                System.out.println(b+" objectを持つあり = "+object2[b]);
     }
     //***配置状態の表示(蟻無)***//
     public static void NotAntCheck(Grand grand){

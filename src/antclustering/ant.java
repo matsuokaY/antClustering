@@ -11,9 +11,7 @@ public class ant {
     //状態
     public  int State;
     //移動速度
-    public double v;
 
-    public int around;
     public int time;
     public Memory Memory;
     
@@ -39,7 +37,5 @@ public class ant {
     public void Move(int x,int y){
         Point P = new Point(x,y);
         this.Location = P;
-//        this.Location.x = x;
-//        this.Location.y = y;
     }
 }

@@ -25,16 +25,16 @@ public class Grand {
     public void setState(int x,int y,int kind){
         this.state[y][x] = kind;
     }
-    public void resetAnt(Point an,Point P){
+    public void resetAnt(Point an,Point P,int no){
         removeAnt(P.x,P.y);
-        setAnt(an.x,an.y);
+        setAnt(an.x,an.y,no);
 
     }
-    public void setAnt(int x,int y){
-        this.ant[y][x] += 1;
+    public void setAnt(int x,int y,int no){
+        this.ant[y][x] = no;
     }
     public void removeAnt(int x,int y){
-        this.ant[y][x] -= 1;
+        this.ant[y][x] = 00;
     }
     public void setCloneState(){
         this.cloneState = state.clone();
@@ -114,7 +114,7 @@ public class Grand {
             Point P  = an.Location;
             an.Move(x, y);
             //移動後の位置に蟻を追加
-            resetAnt(an.Location,P);
+            resetAnt(an.Location,P,an.No);
             //ループ抜け
             return true;
             }

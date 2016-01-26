@@ -1,7 +1,6 @@
 
 package antclustering;
 
-import java.awt.Point;
 import java.util.Random;
 import static antclustering.antOperation.is_stayingAnt;
 import static antclustering.antOperation.has_object;
@@ -112,8 +111,7 @@ public class normal {
             A[ant[k].Location.y][ant[k].Location.x]++;
         }
         for(int k=0;k<ant.length;k++){
-            if(ant[k].State!=0)
-                B[ant[k].Location.y][ant[k].Location.x]=ant[k].State;
+            B[ant[k].Location.y][ant[k].Location.x]=ant[k].State;
         }
         for (int i=0;i<grand.state.length;i++) {
             //要素の様子
@@ -125,7 +123,7 @@ public class normal {
                 }else if(B[i][j]!=0)
                     System.out.print(B[i][j] + " ");
                 else
-                    System.out.print(grand.state[i][j] + " ");
+                    System.out.print(0 + " ");
             }
             System.out.print("        ");
             //蟻の様子

@@ -16,7 +16,8 @@ class result{
 }
 
 public class antOperation {
-    static int pickCount = 3;
+    static int pickCount = 5;
+    static int dropCount = 4;
 
     static final int R = 4;
     static final int r = 1;
@@ -36,11 +37,11 @@ public class antOperation {
     //***周りがpickCount以上なら降ろす***//
     public static boolean dropObject(int an,int iteration){
         if(iteration<Field.Iteration/2)
-            return an>=pickCount-1;
+            return an>=dropCount-1;
         else if(iteration<Field.Iteration/3*2)
-            return an>=pickCount;
+            return an>=dropCount;
         else
-            return an>=pickCount;
+            return an>=dropCount;
     }
 
             //蟻がいるかどうか
@@ -67,38 +68,6 @@ public class antOperation {
         return A[P.y][P.x]!=0;
     }
     //**********************************************************************************************//    
-    //進むべき方向の選択肢決め(マスが0の方向へ)
-/*    public static int[] RandomQ(ant ant,int[][] A,int Re){
-        int[] value = new int[4*Re*Re+4*Re];
-        int x=ant.Location.x,y=ant.Location.y,count=0;
-        ArrayList<Integer> List=new ArrayList<>();
-        for(int j=y-Re;j<=y+Re;j++){
-                for(int i=x-Re;i<=x+Re;i++){
-                    if(i!=x||j!=y){
-                        if(i>=0&&i<A.length&&j>=0&&j<A.length)
-                            value[count] = A[j][i];
-                        else
-                            value[count] = -1;
-                        count++;
-                    }
-                }
-        }
-        count=0;
-        for(int k=0;k<value.length;k++)
-            if(value[k]==0){
-                List.add(k);
-                count++;
-            }
-        if(count == 0){
-            int[] result ={-1};
-            return result;
-        }
-        int[] result =new int[count];
-        for(int l=0;l<count;l++){
-            result[l] = List.get(l);
-        }
-        return result;
-    }*/
     public static int[] RandomQ(ant ant,int[][] A,int Re){
         int[] value = new int[4*Re*Re+4*Re];
         int x=ant.Location.x,y=ant.Location.y,count=0;
@@ -122,12 +91,36 @@ public class antOperation {
         }
         return result;
     }
-    
+
     public static void c (ant[] ant){
         for(int t=0;t<ant.length;t++)
             for(int s=0;s<ant.length;s++)
                 if(t!=s&&ant[t].Location.x==ant[s].Location.x&&ant[t].Location.y==ant[s].Location.y)
                     System.out.println(t+" "+s);
         
+    }
+    
+    static final int[] movex = {-1, 0, 1,-1, 1,-1, 0, 1};
+    static final int[] movey = {-1,-1,-1, 0, 0, 1, 1, 1};
+    static Point Memory(int[][] grand,ant an,ant[] ant) {
+        Point P =new Point();
+        P.x=-1;
+        P.y=-1;
+        int state=0;
+        for(int k=0;k<movey.length;k++){
+            //付近のアリのメモリーに情報が入っているか
+            if(an.Location.y+movey[k]>=0&&an.Location.y+movey[k]<grand.length&&an.Location.x+movex[k]>=0&&an.Location.x+movex[k]<grand.length && ant[grand[an.Location.y+movey[k]][an.Location.x+movex[k]]].Memory.number!=0)
+                for(int l=0;l<Data.Memory_size;l++)
+                    //付近のアリが持っているStateと同じ種類の位置情報を保持しているか
+                    if(ant[grand[an.Location.y+movey[k]][an.Location.x+movex[k]]].Memory.state[l]==an.State&&state==0){
+                        P = ant[grand[an.Location.y+movey[k]][an.Location.x+movex[k]]].Memory.P[l];
+                        state = 1;
+                    }else if(ant[grand[an.Location.y+movey[k]][an.Location.x+movex[k]]].Memory.state[l]==an.State&&state==1){
+                        //確率でメモリを更新
+                        if(Math.random()<0.5)
+                            P = ant[grand[an.Location.y+movey[k]][an.Location.x+movex[k]]].Memory.P[l];
+                    }
+        }
+        return P;
     }
 }
