@@ -12,7 +12,7 @@ public class AntClustering {
     static int object = 200;
     static int kind =  3;
     static int ant = 100;
-    static int iteration = 1000000;
+    static int iteration = 5000000;
 //    static int iteration = 1000;
     static int limittime = 4;
     

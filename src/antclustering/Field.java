@@ -83,14 +83,12 @@ public class Field {
                             M.Moves(ant[an],grand);
                         }else{
                             P=antOperation.Memory(grand.ant,ant[an],ant);
-                            if(0<P.x&&0<P.y&&is_stayingAnt(grand.ant,P))
+                            if(0<P.x&&0<P.y&&is_stayingAnt(grand.ant,P)){
                                 if(!grand.MovingANT(P.x,P.y,ant[an]))
                                     System.out.println("s");
-                            else if(0<P.x&&0<P.y)//予定地に方向に向かって移動？ 
+                                M.Moves(ant[an],grand);
+                            }else if(0<P.x&&0<P.y)//予定地に方向に向かって移動？ 
                                 System.out.println("dame? ("+P.x+","+P.y+") "+grand.state[P.y][P.x]);
-
-                            //ジャンプ後一回数移動を試みる
-                            M.Moves(ant[an],grand);
                         }
                     }else
                         ant[an].time++;
