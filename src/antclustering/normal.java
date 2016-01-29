@@ -71,12 +71,11 @@ public class normal {
                     if(P>R){
                         ant[an].State=grand.state[ant[an].Location.y][ant[an].Location.x];
                         grand.state[ant[an].Location.y][ant[an].Location.x]=0;
-                        Memo=ant[an].Memory.serch_memory(ant[an].State);
                         //該当なし
-                        if(Memo!=-1&&!grand.MovingANT(ant[an].Memory.P[Memo].x,ant[an].Memory.P[Memo].y, ant[an])){
-                            int x = ant[an].Memory.P[Memo].x,y = ant[an].Memory.P[Memo].y;
+                        if(ant[an].Memory.serch_memory(ant[an].State)&&!grand.MovingANT(ant[an].Memory.P[ant[an].State].x,ant[an].Memory.P[ant[an].State].y, ant[an])){
+                            int x = ant[an].Memory.P[ant[an].State].x,y = ant[an].Memory.P[ant[an].State].y;
                             //ジャンプ先予定地に蟻がいなければジャンプ
-                            if(is_stayingAnt(grand.ant,ant[an].Memory.P[Memo]))
+                            if(is_stayingAnt(grand.ant,ant[an].Memory.P[ant[an].State]))
                                 if(!grand.MovingANT(x,y,ant[an]))
                                     System.out.println("s");
                             else//予定地に方向に向かって移動？ 
@@ -128,7 +127,12 @@ public class normal {
             System.out.print("        ");
             //蟻の様子
             for(int j=0;j<grand.state.length;j++){
-                System.out.print(grand.ant[i][j] + " ");
+                if(grand.ant[i][j]!=0&&grand.ant[i][j]<10)
+                    System.out.print(0+""+grand.ant[i][j] + " ");
+                else if(grand.ant[i][j]!=0)
+                    System.out.print(grand.ant[i][j] + " ");
+                else
+                    System.out.print(0+""+0 + " ");
             }
             System.out.print("        ");
             //蟻の様子2
@@ -145,9 +149,9 @@ public class normal {
         }
         System.out.println("");
         //オブジェクトを持ち上げている蟻の表示
-/*        for(int an=0;an<ant.length;an++){
+        for(int an=0;an<ant.length;an++){
             if(ant[an].State!=0){
-                System.out.println("antNo."+(an+1)+" ("+ant[an].Location.x+","+ant[an].Location.y+") = "+ant[an].State);
+         //       System.out.println("antNo."+(an+1)+" ("+ant[an].Location.x+","+ant[an].Location.y+") = "+ant[an].State);
                 object2[ant[an].State]++;
             }
         }
@@ -155,7 +159,7 @@ public class normal {
             System.out.println("object "+b+" = "+object[b]);
         for(int b=0;b<=MAX_kind;b++)
             if(object2[b]!=0)
-                System.out.println(b+" objectを持つあり = "+object2[b]);*/
+                System.out.println(b+" objectを持つあり = "+object2[b]);
     }
     //***配置状態の表示(蟻無)***//
     public static void NotAntCheck(Grand grand){

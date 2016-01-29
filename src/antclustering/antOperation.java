@@ -16,8 +16,8 @@ class result{
 }
 
 public class antOperation {
-    static int pickCount = 5;
-    static int dropCount = 4;
+    static int pickCount = 4;
+    static int dropCount = 3;
 
     static final int R = 4;
     static final int r = 1;
@@ -102,20 +102,21 @@ public class antOperation {
     
     static final int[] movex = {-1, 0, 1,-1, 1,-1, 0, 1};
     static final int[] movey = {-1,-1,-1, 0, 0, 1, 1, 1};
-    static Point Memory(int[][] grand,ant an,ant[] ant) {
+    static Point Memory(int[][] grand,ant an,ant[] ant,int State) {
         Point P =new Point();
         P.x=-1;
         P.y=-1;
         int flag=0;
         for(int k=0;k<movey.length;k++){
             //付近のアリのメモリーに情報が入っているか
-            if(an.Location.y+movey[k]>=0&&an.Location.y+movey[k]<grand.length&&an.Location.x+movex[k]>=0&&an.Location.x+movex[k]<grand.length && ant[grand[an.Location.y+movey[k]][an.Location.x+movex[k]]].Memory.number!=0)
+            if(an.Location.y+movey[k]>=0&&an.Location.y+movey[k]<grand.length && an.Location.x+movex[k]>=0&&an.Location.x+movex[k]<grand.length
+                    && ant[grand[an.Location.y+movey[k]][an.Location.x+movex[k]]].Memory.state[State]!=0)
                 for(int l=0;l<Data.Memory_size;l++)
                     //付近のアリが持っているStateと同じ種類の位置情報を保持しているか
-                    if(ant[grand[an.Location.y+movey[k]][an.Location.x+movex[k]]].Memory.state[l]==an.State&&flag==0){
+                    if(ant[grand[an.Location.y+movey[k]][an.Location.x+movex[k]]].Memory.state[l]==State&&flag==0){
                         P = ant[grand[an.Location.y+movey[k]][an.Location.x+movex[k]]].Memory.P[l];
                         flag = 1;
-                    }else if(ant[grand[an.Location.y+movey[k]][an.Location.x+movex[k]]].Memory.state[l]==an.State&&flag==1){
+                    }else if(ant[grand[an.Location.y+movey[k]][an.Location.x+movex[k]]].Memory.state[l]==State&&flag==1){
                         //確率でメモリを更新
                         if(Math.random()<0.5)
                             P = ant[grand[an.Location.y+movey[k]][an.Location.x+movex[k]]].Memory.P[l];

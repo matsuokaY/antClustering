@@ -83,9 +83,9 @@ public class Data {
                 ant[ant_size] = new ant();
                 ant[ant_size].set(object_x,object_y,ant_size,0);
                 ant[ant_size].Memory = new Memory();
-                ant[ant_size].Memory.state = new int[Memory_size];
-                ant[ant_size].Memory.P = new Point[Memory_size];
-                for(int i=0;i<Memory_size;i++){
+                ant[ant_size].Memory.state = new int[MAX_kind+1];
+                ant[ant_size].Memory.P = new Point[MAX_kind+1]; 
+                for(int i=0;i<=MAX_kind;i++){
                     ant[ant_size].Memory.P[i] = new Point();
                 }
                 grand.setAnt(object_x,object_y,ant_size);

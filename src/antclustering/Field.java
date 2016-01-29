@@ -68,32 +68,31 @@ public class Field {
                         ant[an].State=grand.state[ant[an].Location.y][ant[an].Location.x];
                         grand.state[ant[an].Location.y][ant[an].Location.x]=0;
                         ant[an].time=0;
-                        Memo=ant[an].Memory.serch_memory(ant[an].State);
-                        //該当なし
-                        if(Memo!=-1&&!grand.MovingANT(ant[an].Memory.P[Memo].x,ant[an].Memory.P[Memo].y, ant[an])){
-                            int x = ant[an].Memory.P[Memo].x,y = ant[an].Memory.P[Memo].y;
-                            //ジャンプ先予定地に蟻がいなければジャンプ
-                            if(is_stayingAnt(grand.ant,ant[an].Memory.P[Memo]))
-                                if(!grand.MovingANT(x,y,ant[an]))
-                                    System.out.println("s");
-                            else//予定地に方向に向かって移動？ 
-                                System.out.println("dame? ("+x+","+y+") "+grand.state[y][x]);
-
-                            //ジャンプ後一回数移動を試みる
-                            M.Moves(ant[an],grand);
-                        }else{
-                            P=antOperation.Memory(grand.ant,ant[an],ant);
-                            if(0<P.x&&0<P.y&&is_stayingAnt(grand.ant,P)){
-                                if(!grand.MovingANT(P.x,P.y,ant[an]))
-                                    System.out.println("s");
-                                M.Moves(ant[an],grand);
-                            }else if(0<P.x&&0<P.y)//予定地に方向に向かって移動？ 
-                                System.out.println("dame? ("+P.x+","+P.y+") "+grand.state[P.y][P.x]);
-                        }
                     }else
                         ant[an].time++;
+                    
+                //メモリの受け渡し
+                for(int j=1;j<=MAX_kind;j++)
+                    if(ant[an].Memory.serch_memory(j)){//ある物体の情報がないとき
+                        P = antOperation.Memory(grand.ant,ant[an],ant,j);
+                        if(0<P.x&&0<P.y)//付近のアリが情報を持っているならば
+                            ant[an].Memory.set_memory(P,j);
+                    }
+
+                //物を持っている かつ　メモリに保存されている　とき
+                if(ant[an].State!=0&&ant[an].Memory.serch_memory(ant[an].State)){
+                    if(grand.MovingANT(ant[an].Memory.P[ant[an].State].x,ant[an].Memory.P[ant[an].State].y, ant[an])){
+                        int x = ant[an].Memory.P[ant[an].State].x,y = ant[an].Memory.P[ant[an].State].y;
+                        //ジャンプ先予定地に蟻がいなければジャンプ
+                        if(is_stayingAnt(grand.ant,ant[an].Memory.P[ant[an].State]))
+                            if(!grand.MovingANT(x,y,ant[an]))
+                                System.out.println("s");
+                        else//予定地に方向に向かって移動？ 
+                            System.out.println("dame? ("+x+","+y+") "+grand.state[y][x]);
+                    }
+                }
                 //蟻の移動
-                    M.Moves(ant[an],grand);
+                M.Moves(ant[an],grand);
                 
             }
         }
@@ -151,7 +150,7 @@ public class Field {
         //オブジェクトを持ち上げている蟻の表示
         for(int an=0;an<ant.length;an++){
             if(ant[an].State!=0){
-                System.out.println("antNo."+(an+1)+" ("+ant[an].Location.x+","+ant[an].Location.y+") = "+ant[an].State);
+    //            System.out.println("antNo."+(an+1)+" ("+ant[an].Location.x+","+ant[an].Location.y+") = "+ant[an].State);
                 object2[ant[an].State]++;
             }
         }
