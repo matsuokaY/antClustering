@@ -26,9 +26,16 @@ public class AntClustering {
         data2.clone(data);
         data3.clone(data);
         System.out.println("/****************************************************************************/");
+        long start = System.currentTimeMillis();
         normal.local_initial_parameters(data2);        
+        long end = System.currentTimeMillis();
+        System.out.println("nomal ="+(end - start)  + "ms");
+        
         System.out.println("/****************************************************************************/");        
+        long start2 = System.currentTimeMillis();
         Field.local_initial(data3);
+        long end2 = System.currentTimeMillis();
+        System.out.println("field ="+(end2 - start2)  + "ms");
         System.out.println("\n終了");
     }
     public static void print(Data data){

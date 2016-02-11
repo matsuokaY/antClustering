@@ -29,7 +29,7 @@ public class Field {
     public static void local_initial(Data data){     
 //        grand.Check();
         setData(data);
-        NotAntCheck(grand);
+    //    NotAntCheck(grand);
         System.out.println("\nクラスタリング開始");
         Clustering(grand,ant);
         System.out.println("クラスタリング終了");
@@ -148,7 +148,7 @@ public class Field {
         }
         System.out.println("");
         //オブジェクトを持ち上げている蟻の表示
-        for(int an=0;an<ant.length;an++){
+/*        for(int an=0;an<ant.length;an++){
             if(ant[an].State!=0){
     //            System.out.println("antNo."+(an+1)+" ("+ant[an].Location.x+","+ant[an].Location.y+") = "+ant[an].State);
                 object2[ant[an].State]++;
@@ -158,7 +158,7 @@ public class Field {
             System.out.println("object "+b+" = "+object[b]);
         for(int b=0;b<=MAX_kind;b++)
             if(object2[b]!=0)
-                System.out.println(b+" objectを持つあり = "+object2[b]);
+                System.out.println(b+" objectを持つあり = "+object2[b]);/*/
     }
     //***配置状態の表示(蟻無)***//
     public static void NotAntCheck(Grand grand){
