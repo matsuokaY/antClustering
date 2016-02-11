@@ -30,10 +30,10 @@ public class Field {
 //        grand.Check();
         setData(data);
     //    NotAntCheck(grand);
-        System.out.println("\nクラスタリング開始");
+    //    System.out.println("\nクラスタリング開始");
         Clustering(grand,ant);
-        System.out.println("クラスタリング終了");
-        System.out.println("\n/****************************************************************************/");
+    //    System.out.println("クラスタリング終了");
+    //    System.out.println("\n/****************************************************************************/");
         Check(grand,ant);
     }
 
