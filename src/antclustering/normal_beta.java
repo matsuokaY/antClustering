@@ -2,24 +2,16 @@
 package antclustering;
 
 import java.util.Random;
-import static antclustering.antOperation.is_stayingAnt;
 import static antclustering.antOperation.has_object;
 import static antclustering.antOperation.is_carryingObject;
 import static antclustering.antOperation.is_cellEmpty;
+import static antclustering.antOperation.is_stayingAnt;
 import static antclustering.antOperation.is_unloading;
+import static antclustering.normal.wander;
+import java.awt.Point;
 
-/*
-class G{
-    int x;
-    int y;
-    int steta;
-    public G(int state,int x,int y){
-        this.steta=state;
-        this.x=x;
-        this.y=y;
-    }
-}*/
-public class normal {
+
+public class normal_beta {
     static int Range = 2;
     
     static Grand grand ;
@@ -47,6 +39,7 @@ public class normal {
 
     public static void Clustering(Grand grand,ant[] ant) {
         int Memo=0;
+        Point Po = new Point();
         grand.set(grand.state.length);
         Random rnd = new Random();
         //「Interation」の数だけ繰り返し
@@ -68,6 +61,11 @@ public class normal {
                 }else if(is_unloading(ant[an])&&has_object(ant[an].Location,grand.state)){
                     double F = f(ant[an],grand.state);
                     double R = Math.random(),P=Ppick(F);
+                    /*if(P>R){
+                        ant[an].State=grand.state[ant[an].Location.y][ant[an].Location.x];
+                        grand.state[ant[an].Location.y][ant[an].Location.x]=0;
+                        //該当なし
+                    }*/
                     if(P>R){
                         ant[an].State=grand.state[ant[an].Location.y][ant[an].Location.x];
                         grand.state[ant[an].Location.y][ant[an].Location.x]=0;
@@ -85,7 +83,27 @@ public class normal {
                             wander(t,ant[an],grand);
                         }
                     }
+                    
                 }
+                
+        /*        for(int j=1;j<=MAX_kind;j++)
+                    if(ant[an].Memory.serch_memory(j)){//ある物体の情報がないとき
+                        Po = antOperation.Memory(grand.ant,ant[an],ant,j);
+                        if(0<Po.x&&0<Po.y)//付近のアリが情報を持っているならば
+                            ant[an].Memory.set_memory(Po,j);
+                    }
+
+           
+                if(ant[an].Memory.serch_memory(ant[an].State)&&!grand.MovingANT(ant[an].Memory.P[ant[an].State].x,ant[an].Memory.P[ant[an].State].y, ant[an])){
+                            int x = ant[an].Memory.P[ant[an].State].x,y = ant[an].Memory.P[ant[an].State].y;
+                            //ジャンプ先予定地に蟻がいなければジャンプ
+                            if(is_stayingAnt(grand.ant,ant[an].Memory.P[ant[an].State]))
+                                if(!grand.MovingANT(x,y,ant[an]))
+                                    System.out.println("s");
+                            else//予定地に方向に向かって移動？ 
+                                System.out.println("dame? ("+x+","+y+") "+grand.state[y][x]);
+                }
+          */      
                 //ランダム移動
                 wander(t,ant[an],grand);
             }
@@ -148,18 +166,6 @@ public class normal {
             System.out.println("");
         }
         System.out.println("");
-        //オブジェクトを持ち上げている蟻の表示
- /*       for(int an=0;an<ant.length;an++){
-            if(ant[an].State!=0){
-         //       System.out.println("antNo."+(an+1)+" ("+ant[an].Location.x+","+ant[an].Location.y+") = "+ant[an].State);
-                object2[ant[an].State]++;
-            }
-        }
-        for(int b=1;b<object.length;b++)
-            System.out.println("object "+b+" = "+object[b]);
-        for(int b=0;b<=MAX_kind;b++)
-            if(object2[b]!=0)
-                System.out.println(b+" objectを持つあり = "+object2[b]);*/
     }
     //***配置状態の表示(蟻無)***//
     public static void NotAntCheck(Grand grand){

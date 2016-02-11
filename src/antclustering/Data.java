@@ -2,6 +2,10 @@
 package antclustering;
 
 import java.awt.Point;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Random;
 
 public class Data {
@@ -137,5 +141,41 @@ public class Data {
         }
         
     }
+    public void write(Data d){
+        try{//ファイルの書き込みにはエラー処理がいる。
+            FileWriter wr=new FileWriter("file.txt");//Fileとアプリを書き込みでつなぐ
+            for(int i=0;i<d.MAX_size;i++){
+                for(int j=0;j<d.MAX_size;j++){
+                    wr.write(String.valueOf(d.grand.ant[i][j])+" ");
+                }
+                wr.write("\r\n");
+            }
+            for(int i=0;i<d.MAX_size;i++){
+                for(int j=0;j<d.MAX_size;j++){
+                    wr.write(String.valueOf(d.grand.state[i][j])+" ");
+                }
+                wr.write("\r\n");
+            }
+            wr.flush();//flush
+            wr.close();//閉じる
+        }catch(Exception e){
+            //例外処理は、エラーを表示
+            System.out.println("Err e="+e);
+        }
+    }
+    public static void read(String args[]){
+        char buf[]=new char[2048];//読み取りデータの一時保存先
+        try{//ファイルをか使うには、例外処理が必要
+            FileReader rd=new FileReader("file.txt");//読み取り用として、ファイルとアプリを繋ぐ
+            int l=rd.read(buf);//ファイルを読み込み、読み込んだ文字をlにセット
+            rd.close();//閉じる
+            String s=new String(buf,0,l);//読み込んだ配列を文字に戻す
+            System.out.println(s);//読み込んだ文字の表示
+        }catch(IOException e){
+            //エラーが発生したら　エラーを表示
+            System.out.println("Err="+e);
+        }
+    }
+        
 
 }

@@ -8,18 +8,8 @@ import static antclustering.antOperation.is_carryingObject;
 import static antclustering.antOperation.is_cellEmpty;
 import static antclustering.antOperation.is_unloading;
 
-/*
-class G{
-    int x;
-    int y;
-    int steta;
-    public G(int state,int x,int y){
-        this.steta=state;
-        this.x=x;
-        this.y=y;
-    }
-}*/
-public class normal {
+
+public class normal1 {
     static int Range = 2;
     
     static Grand grand ;

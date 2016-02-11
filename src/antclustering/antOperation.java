@@ -111,7 +111,8 @@ public class antOperation {
             //付近のアリのメモリーに情報が入っているか
             if(an.Location.y+movey[k]>=0&&an.Location.y+movey[k]<grand.length && an.Location.x+movex[k]>=0&&an.Location.x+movex[k]<grand.length
                     && ant[grand[an.Location.y+movey[k]][an.Location.x+movex[k]]].Memory.state[State]!=0)
-                for(int l=0;l<Data.Memory_size;l++)
+//                for(int l=0;l<Data.Memory_size;l++)
+                for(int l=0;l<an.Memory.state.length;l++)
                     //付近のアリが持っているStateと同じ種類の位置情報を保持しているか
                     if(ant[grand[an.Location.y+movey[k]][an.Location.x+movex[k]]].Memory.state[l]==State&&flag==0){
                         P = ant[grand[an.Location.y+movey[k]][an.Location.x+movex[k]]].Memory.P[l];
