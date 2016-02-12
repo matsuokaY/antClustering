@@ -189,18 +189,7 @@ public class Field {
             System.out.println();
         }
         
-    }
-    public static void CheckP(Grand grand){
-        for(int i=0;i<grand.state.length;i++){
-            for(int k=1;k<=MAX_kind;k++){
-                for(int j=0;j<grand.state.length;j++){
-                    int word = (int) (grand.pheromone[k][i][j]);
-                    System.out.print(word + " ");
-                }
-                System.out.print("        ");
-            }
-            System.out.println();
-        }
+    
     }
     //***表示***//
     public static void Print(int i,Grand grand){

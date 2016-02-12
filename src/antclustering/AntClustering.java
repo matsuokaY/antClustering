@@ -20,33 +20,30 @@ public class AntClustering {
     
     
     public static void main(String[] args) {
-        Data data= new Data();
-        Data data2 = new Data();
-        Data data3 = new Data();
-        Data data4 = new Data();
-        data.set(size, object, kind, ant, iteration, limittime);
-        data.Fieldset();
-        data2.clone(data);
-        data3.clone(data);
-        data4.clone(data);
-        data2.write(data);
-        String[] a= new String[24];
-        data2.read(a);
-   //     print(data);
+        //書き込み
+    //    write();
+        //読み込み
+        Data data = read(size);
+        Data data2 = read(size);
+        Data data3 = read(size);
+//        data.read(size);
+//        data2.read(size);
+//        data3.read(size);
+        print(data2);
         System.out.println("/****************************************************************************/");
         long start = System.currentTimeMillis();
-//        normal_beta.local_initial_parameters(data2);        
+ //       normal_beta.local_initial_parameters(data);        
         long end = System.currentTimeMillis();
         System.out.println("nomal ="+(end - start)  + "ms");
         
         System.out.println("/****************************************************************************/");        
         long start2 = System.currentTimeMillis();
- //       Field.local_initial(data3);
+        Field.local_initial(data2);
         long end2 = System.currentTimeMillis();
         System.out.println("field ="+(end2 - start2)  + "ms");
         System.out.println("/****************************************************************************/");
         long start3 = System.currentTimeMillis();
- //       normal.local_initial_parameters(data4);        
+  //      normal.local_initial_parameters(data3);        
         long end3 = System.currentTimeMillis();
         System.out.println("nomal_beta ="+(end3 - start3)  + "ms");
         
@@ -65,7 +62,7 @@ public class AntClustering {
             //蟻の様子
             for(int j=0;j<data.grand.state.length;j++){
                 if(data.grand.ant[i][j]!=0&&data.grand.ant[i][j]<10)
-                    System.out.print(0+""+data.grand.ant[i][j] + " ");
+                    System.out.print(0+""+(data.grand.ant[i][j]) + " ");
                 else if(data.grand.ant[i][j]!=0)
                     System.out.print(data.grand.ant[i][j] + " ");
                 else
@@ -87,5 +84,31 @@ public class AntClustering {
         }*/
         
     }
+
+    private static void write() {
+        Data data= new Data();
+        data.set(size, object, kind, ant, iteration, limittime);
+        data.Fieldset();
+    //    print(data);
+        //書き込み
+        data.write();
+    }
+    private static Data normal() {
+        Data data= new Data();
+        data.set(size, object, kind, ant, iteration, limittime);
+        data.Fieldset();
+        print(data);
+        //書き込み
+        return data;
+    }
+
+    private static Data read(int size) {
+        Data data= new Data();
+        data.read(size);
+        data.set(size, object, kind, ant, iteration, limittime);
+        data.setting();
+        return data;
+    }
+    
 
 }

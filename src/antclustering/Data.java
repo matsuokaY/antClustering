@@ -2,6 +2,7 @@
 package antclustering;
 
 import java.awt.Point;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -119,7 +120,7 @@ public class Data {
         this.grand.state = new int[data.MAX_size][data.MAX_size];
         this.grand.ant = new int[data.MAX_size][data.MAX_size];
         this.ant_E = (int) (data.MAX_ant*0.2);
-        this.ant = new ant[data.MAX_ant];
+        this.ant = new ant[data.MAX_ant-1];
         
         for(int i=0;i<grand.ant.length;i++)
             for(int j=0;j<grand.ant.length;j++){
@@ -141,18 +142,22 @@ public class Data {
         }
         
     }
-    public void write(Data d){
+    //faileに書き込み
+    public void write(){
         try{//ファイルの書き込みにはエラー処理がいる。
+            int[][] B = new int[grand.state.length][grand.state.length];
+            for(int k=0;k<ant.length;k++){
+            if(ant[k].State!=0)
+                B[ant[k].Location.y][ant[k].Location.x]=ant[k].State+1;
+            }
             FileWriter wr=new FileWriter("file.txt");//Fileとアプリを書き込みでつなぐ
-            for(int i=0;i<d.MAX_size;i++){
-                for(int j=0;j<d.MAX_size;j++){
-                    wr.write(String.valueOf(d.grand.ant[i][j])+" ");
+            for(int i=0;i<this.MAX_size;i++){
+                for(int j=0;j<this.MAX_size;j++){
+                    wr.write(String.valueOf(this.grand.ant[i][j]+1)+" ");
                 }
                 wr.write("\r\n");
-            }
-            for(int i=0;i<d.MAX_size;i++){
-                for(int j=0;j<d.MAX_size;j++){
-                    wr.write(String.valueOf(d.grand.state[i][j])+" ");
+                for(int j=0;j<this.MAX_size;j++){
+                    wr.write(String.valueOf(this.grand.state[i][j])+" ");
                 }
                 wr.write("\r\n");
             }
@@ -163,17 +168,57 @@ public class Data {
             System.out.println("Err e="+e);
         }
     }
-    public static void read(String args[]){
-        char buf[]=new char[2048];//読み取りデータの一時保存先
+    //faileから呼び出し
+    public void read(int size){
+        String line,line2;
+        String[] fruit,fruit2;
+        int j=0;
+        this.grand = new Grand();
         try{//ファイルをか使うには、例外処理が必要
             FileReader rd=new FileReader("file.txt");//読み取り用として、ファイルとアプリを繋ぐ
-            int l=rd.read(buf);//ファイルを読み込み、読み込んだ文字をlにセット
+            BufferedReader br = new BufferedReader(rd);
+            this.grand.state = new int[size][size];
+            this.grand.ant = new int[size][size];
+            while((line = br.readLine()) != null){
+                if((line2 = br.readLine()) != null){
+                    fruit = line.split(" ", 0);
+                    fruit2 = line2.split(" ", 0);
+                    for(int i=0;i<fruit.length;i++){
+
+                        this.grand.ant[j][i] = Integer.parseInt(fruit[i]);
+                        this.grand.state[j][i] = Integer.parseInt(fruit2[i]);
+                    }j++;
+                }
+            }
             rd.close();//閉じる
-            String s=new String(buf,0,l);//読み込んだ配列を文字に戻す
-            System.out.println(s);//読み込んだ文字の表示
+
         }catch(IOException e){
             //エラーが発生したら　エラーを表示
             System.out.println("Err="+e);
+        }
+    }
+    //呼出し後アリをセット
+    void setting() {
+        ant = new ant[MAX_ant];
+        int ant_size=0;
+    //蟻の配置
+        for(int j=0;j<this.MAX_size;j++){
+            for(int i=0;i<this.MAX_size;i++){
+                if(grand.ant[j][i]!=0){
+                    if(grand.ant[j][i]==100)
+                        System.out.println(1);
+                    ant_size = grand.ant[j][i]-1;
+                    ant[ant_size] = new ant();
+                    ant[ant_size].set(i,j,ant_size,0);
+                    ant[ant_size].Memory = new Memory();
+                    ant[ant_size].Memory.state = new int[MAX_kind+1];
+                    ant[ant_size].Memory.P = new Point[MAX_kind+1]; 
+                    for(int k=0;k<=MAX_kind;k++){
+                        ant[ant_size].Memory.P[k] = new Point();
+                    }
+                    grand.setAnt(i,j,ant_size);
+                }
+            }
         }
     }
         

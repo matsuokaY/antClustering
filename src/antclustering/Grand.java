@@ -5,14 +5,7 @@ import java.awt.Point;
 
 //      a[y][x]
 public class Grand {
-    //蟻のフェロモン濃度
-    public final double p = 1;
-    //フェロモンの蒸発率
-    public final double lostP = 0.9;
-    public static final double p_max = 10;
-    
     public int[][] state;
-    public double[][][] pheromone;
     public int[][] cloneState;
     public int[][] ant;
     
@@ -49,17 +42,7 @@ public class Grand {
     public int D(ant ant,int R){
         return (R*2+1)*(R*2+1)-1-AroundR(ant,R);
     }
-    //***フェロモンの蒸発***//
-    public void lostP(){
-        for(int i=0;i<pheromone[0].length;i++){
-            for(int j=0;j<pheromone[0][i].length;j++){
-                for(int k=0;k<pheromone.length;k++){
-                    if(this.pheromone[k][i][j]!=0)
-                        this.pheromone[k][i][j] *= lostP;
-                }
-            }
-        }
-    }
+
     //**********************************************************************************************//
     //***周りとの類似度***//
     public double Neight(ant ant,int Range){
