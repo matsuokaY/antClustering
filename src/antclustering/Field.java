@@ -1,13 +1,12 @@
 package antclustering;
 
-import static antclustering.antOperation.dropObject;
 import static antclustering.antOperation.has_object;
 import static antclustering.antOperation.is_carryingObject;
 import static antclustering.antOperation.is_cellEmpty;
 import static antclustering.antOperation.is_stayingAnt;
 import static antclustering.antOperation.is_unloading;
-import static antclustering.antOperation.pickObject;
 import java.awt.Point;
+import java.util.Random;
 
 
 //
@@ -15,24 +14,19 @@ import java.awt.Point;
 public class Field {
     static Grand grand ;
     //蟻
-    static int ant_E;
     static ant[] ant; 
     //*****************************************************************************//
     static int MAX_kind;
     static int ANT;
     //繰り返し回数
     static int Iteration;
-    static int limitMoveTime;
-    static int limitKeepTime;
-    static int limitCount;
+
     static int count;
     public static void local_initial(Data data){     
 //        grand.Check();
         setData(data);
     //    NotAntCheck(grand);
-    //    System.out.println("\nクラスタリング開始");
         Clustering(grand,ant);
-    //    System.out.println("クラスタリング終了");
     //    System.out.println("\n/****************************************************************************/");
         Check(grand,ant);
     }
@@ -40,22 +34,26 @@ public class Field {
 //**********************************************************************************************//
     //***クラスタリングの実行***//
     public static void Clustering(Grand grand,ant[] ant){
-        int Memo;
         Point P = new Point();
-        
         grand.set(ant.length);
+        long start = System.nanoTime(),end;
+        Random rnd = new Random();
         //「Interation」の数だけ繰り返し
         for(int i=0;i<Iteration;i++){
             //回数表示
-//            Print(i,grand);
-//            antOperation.c(ant);
-            //クローンの作成
+            if(i%(Iteration/100)==0&&i!=0){
+                end = System.nanoTime();
+                System.out.println("field ="+(end - start)  + "ms");
+                if(i%(Iteration/10)==0)
+                    NotAntCheck(grand);
+                start = System.nanoTime();
+            }
             //すべての蟻で実行
             for(int an=0;an<ant.length;an++){
-                //蟻の行動
                 //drop
                 if(is_carryingObject(ant[an])&&is_cellEmpty(ant[an].Location,grand.state))
-                    if(dropObject(grand.AroundR(ant[an],1),i)){
+//                    if(dropObject(grand.AroundR(ant[an],1),i)){
+                    if(grand.AroundR(ant[an],1)>rnd.nextInt(4)){
                         grand.state[ant[an].Location.y][ant[an].Location.x]=ant[an].State;
                         ant[an].State=0;
                         ant[an].time=0;
@@ -64,13 +62,13 @@ public class Field {
                         ant[an].time++;
                 //pick
                 else if(is_unloading(ant[an])&&has_object(ant[an].Location,grand.state))
-                    if(pickObject(grand.AroundR(ant[an],1),i)){
+//                    if(pickObject(grand.AroundR(ant[an],1),i)){
+                    if(grand.AroundR(ant[an],1)<rnd.nextInt(8)){
                         ant[an].State=grand.state[ant[an].Location.y][ant[an].Location.x];
                         grand.state[ant[an].Location.y][ant[an].Location.x]=0;
                         ant[an].time=0;
                     }else
                         ant[an].time++;
-                    
                 //メモリの受け渡し
                 for(int j=1;j<=MAX_kind;j++)
                     if(ant[an].Memory.serch_memory(j)){//ある物体の情報がないとき
@@ -78,19 +76,13 @@ public class Field {
                         if(0<P.x&&0<P.y)//付近のアリが情報を持っているならば
                             ant[an].Memory.set_memory(P,j);
                     }
-
-                //物を持っている かつ　メモリに保存されている　とき
-                if(ant[an].State!=0&&ant[an].Memory.serch_memory(ant[an].State)){
-                    if(grand.MovingANT(ant[an].Memory.P[ant[an].State].x,ant[an].Memory.P[ant[an].State].y, ant[an])){
-                        int x = ant[an].Memory.P[ant[an].State].x,y = ant[an].Memory.P[ant[an].State].y;
-                        //ジャンプ先予定地に蟻がいなければジャンプ
-                        if(is_stayingAnt(grand.ant,ant[an].Memory.P[ant[an].State]))
-                            if(!grand.MovingANT(x,y,ant[an]))
-                                System.out.println("s");
-                        else//予定地に方向に向かって移動？ 
-                            System.out.println("dame? ("+x+","+y+") "+grand.state[y][x]);
+                //物を持っている かつ　メモリに保存されている　とき             
+                if(ant[an].State!=0&&ant[an].Memory.serch_memory(ant[an].State))
+                    //ジャンプ先予定地に蟻がいなければジャンプ
+                    if(is_stayingAnt(grand.ant,ant[an].Memory.P[ant[an].State])){
+                        grand.MovingANT(ant[an].Memory.P[ant[an].State].x,ant[an].Memory.P[ant[an].State].y,ant[an]);
+                        M.Moves(ant[an],grand);
                     }
-                }
                 //蟻の移動
                 M.Moves(ant[an],grand);
                 
@@ -115,14 +107,15 @@ public class Field {
         for (int i=0;i<grand.state.length;i++) {
             //要素の様子
             for(int j=0;j<grand.state.length;j++){
-                if(grand.state[i][j]!=0){
+                System.out.print(grand.state[i][j] + " ");
+/*                if(grand.state[i][j]!=0){
                     System.out.print(grand.state[i][j] + " ");
                     
                     object[grand.state[i][j]]++;
                 }else if(B[i][j]!=0)
                     System.out.print(B[i][j] + " ");
                 else
-                    System.out.print(grand.state[i][j] + " ");
+                    System.out.print(grand.state[i][j] + " ");*/
             }
             System.out.print("        ");
             //蟻の様子
@@ -225,26 +218,16 @@ public class Field {
             count=0;
         }
     }
-//**********************************************************************************************//    
-    //***ユークリッド距離の計算***//
-    public static double EuclideanLenght(int x1,int y1,int x2,int y2){
-        return Math.sqrt(Math.pow(x1-x2,2)+Math.pow(y1-y2,2));
-    }
-
 //**********************************************************************************************//
     private static void setData(Data data) {
         grand = data.grand;
     //蟻
-        ant_E = data.ant_E;
         ant = data.ant.clone(); 
     //*****************************************************************************//
         MAX_kind = data.MAX_kind;
         ANT = data.ANT;
     //繰り返し回数
         Iteration = data.Iteration;
-        limitMoveTime = data.limitMoveTime;
-        limitKeepTime = data.limitKeepTime;
-        limitCount = data.limitCount; 
     }
 }
     

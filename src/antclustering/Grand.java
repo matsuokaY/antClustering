@@ -39,11 +39,6 @@ public class Grand {
         return state[y][x] == object;
     }
     //**********************************************************************************************//
-    public int D(ant ant,int R){
-        return (R*2+1)*(R*2+1)-1-AroundR(ant,R);
-    }
-
-    //**********************************************************************************************//
     //***周りとの類似度***//
     public double Neight(ant ant,int Range){
         double count=0,objectCount=0;

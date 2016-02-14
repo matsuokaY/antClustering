@@ -1,24 +1,12 @@
 
 package antclustering;
 
-import java.util.Random;
 import static antclustering.antOperation.is_stayingAnt;
 import static antclustering.antOperation.has_object;
 import static antclustering.antOperation.is_carryingObject;
 import static antclustering.antOperation.is_cellEmpty;
 import static antclustering.antOperation.is_unloading;
 
-/*
-class G{
-    int x;
-    int y;
-    int steta;
-    public G(int state,int x,int y){
-        this.steta=state;
-        this.x=x;
-        this.y=y;
-    }
-}*/
 public class normal {
     static int Range = 2;
     
@@ -38,21 +26,24 @@ public class normal {
 //        grand.Check();
         setData(data);
  //       NotAntCheck(grand);
- //       System.out.println("\nクラスタリング開始");
         Clustering(grand,ant);
- //       System.out.println("クラスタリング終了");
    //     System.out.println("\n/****************************************************************************/");
         Check(grand,ant);
     }
 
     public static void Clustering(Grand grand,ant[] ant) {
-        int Memo=0;
         grand.set(grand.state.length);
-        Random rnd = new Random();
+        long start = System.nanoTime(),end; 
         //「Interation」の数だけ繰り返し
-        for(int t=0;t<Iteration;t++){
+        for(int i=0;i<Iteration;i++){
             //回数表示
-//            Print(t,grand);
+            if(i%(Iteration/100)==0&&i!=0){
+                end = System.nanoTime();
+                System.out.println("nomal ="+(end - start)  + "ms");
+                if(i%(Iteration/10)==0)
+                    NotAntCheck(grand);
+                start = System.nanoTime();
+            }
             //すべての蟻で実行
             for(int an=0;an<ant.length;an++){
                 //drop
@@ -71,23 +62,17 @@ public class normal {
                     if(P>R){
                         ant[an].State=grand.state[ant[an].Location.y][ant[an].Location.x];
                         grand.state[ant[an].Location.y][ant[an].Location.x]=0;
-                        //該当なし
-                        if(ant[an].Memory.serch_memory(ant[an].State)&&!grand.MovingANT(ant[an].Memory.P[ant[an].State].x,ant[an].Memory.P[ant[an].State].y, ant[an])){
-                            int x = ant[an].Memory.P[ant[an].State].x,y = ant[an].Memory.P[ant[an].State].y;
+                        //メモリーに座標が保存されているなら
+                        if(ant[an].Memory.serch_memory(ant[an].State))
                             //ジャンプ先予定地に蟻がいなければジャンプ
-                            if(is_stayingAnt(grand.ant,ant[an].Memory.P[ant[an].State]))
-                                if(!grand.MovingANT(x,y,ant[an]))
-                                    System.out.println("s");
-                            else//予定地に方向に向かって移動？ 
-                                System.out.println("dame? ("+x+","+y+") "+grand.state[y][x]);
-
-                            //ジャンプ後一回数移動を試みる
-                            wander(t,ant[an],grand);
-                        }
+                            if(is_stayingAnt(grand.ant,ant[an].Memory.P[ant[an].State])){
+                                grand.MovingANT(ant[an].Memory.P[ant[an].State].x,ant[an].Memory.P[ant[an].State].y,ant[an]);
+                                M.Moves(ant[an],grand);
+                            }
                     }
                 }
                 //ランダム移動
-                wander(t,ant[an],grand);
+                wander(i,ant[an],grand);
             }
             
         }
@@ -115,14 +100,15 @@ public class normal {
         for (int i=0;i<grand.state.length;i++) {
             //要素の様子
             for(int j=0;j<grand.state.length;j++){
-                if(grand.state[i][j]!=0){
+/*                if(grand.state[i][j]!=0){
                     System.out.print(grand.state[i][j] + " ");
                     
                     object[grand.state[i][j]]++;
                 }else if(B[i][j]!=0)
                     System.out.print(B[i][j] + " ");
                 else
-                    System.out.print(0 + " ");
+                    System.out.print(0 + " ");*/
+                System.out.print(grand.state[i][j] + " ");
             }
             System.out.print("        ");
             //蟻の様子
@@ -249,15 +235,12 @@ public class normal {
     }
     //閾値
     static double Threshold(){
-//        return A*(1+(V-1)/V);
         return 5.0;
-        //A*(1+2/3)=5/3*1/2=5/6
     }
 
     private static void setData(Data data) {
         grand = data.grand;
     //蟻
-        ant_E = data.ant_E;
         ant = data.ant.clone(); 
     //*****************************************************************************//
         MAX_kind = data.MAX_kind;

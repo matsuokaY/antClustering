@@ -13,7 +13,6 @@ public class Data {
     //**********************************************************************************************//
     public Grand grand ;
     //蟻
-    public int ant_E;
     public ant[] ant;
     //閾値
     static final double A = 1;
@@ -49,8 +48,6 @@ public class Data {
         MAX_state = kind*2+1;
         ANT = kind +1;
         Iteration = iteration;
-        limitMoveTime = limitmovetime;
-        limitKeepTime = (int) (limitmovetime*1.5);
         limitCount = iteration / 100;
         
     }
@@ -62,7 +59,6 @@ public class Data {
         grand.ant = new int[MAX_size][MAX_size];
 //        grand.pheromone = new double[MAX_kind+1][MAX_size][MAX_size];
         grand.C = new C[MAX_kind];
-        ant_E = (int) (MAX_ant*0.2);
         ant = new ant[MAX_ant];
         int object_x,object_y,object_kind,ant_size=0,object_size=0;
         
@@ -108,8 +104,6 @@ public class Data {
         ANT = data.ANT;
         //繰り返し回数
         Iteration = data.Iteration;
-        limitMoveTime = data.limitMoveTime;
-        limitKeepTime = data.limitKeepTime;
         limitCount = data.limitCount;
         //繰り返し回数の半分
         HalfIteration = data.HalfIteration;
@@ -119,7 +113,6 @@ public class Data {
         this.grand = new Grand();
         this.grand.state = new int[data.MAX_size][data.MAX_size];
         this.grand.ant = new int[data.MAX_size][data.MAX_size];
-        this.ant_E = (int) (data.MAX_ant*0.2);
         this.ant = new ant[data.MAX_ant-1];
         
         for(int i=0;i<grand.ant.length;i++)
@@ -205,8 +198,6 @@ public class Data {
         for(int j=0;j<this.MAX_size;j++){
             for(int i=0;i<this.MAX_size;i++){
                 if(grand.ant[j][i]!=0){
-                    if(grand.ant[j][i]==100)
-                        System.out.println(1);
                     ant_size = grand.ant[j][i]-1;
                     ant[ant_size] = new ant();
                     ant[ant_size].set(i,j,ant_size,0);

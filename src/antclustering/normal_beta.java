@@ -1,13 +1,11 @@
 
 package antclustering;
 
-import java.util.Random;
 import static antclustering.antOperation.has_object;
 import static antclustering.antOperation.is_carryingObject;
 import static antclustering.antOperation.is_cellEmpty;
 import static antclustering.antOperation.is_stayingAnt;
 import static antclustering.antOperation.is_unloading;
-import static antclustering.normal.wander;
 import java.awt.Point;
 
 
@@ -30,7 +28,6 @@ public class normal_beta {
 //        grand.Check();
         setData(data);
  //       NotAntCheck(grand);
- //       System.out.println("\nクラスタリング開始");
         Clustering(grand,ant);
  //       System.out.println("クラスタリング終了");
    //     System.out.println("\n/****************************************************************************/");
@@ -38,14 +35,19 @@ public class normal_beta {
     }
 
     public static void Clustering(Grand grand,ant[] ant) {
-        int Memo=0;
         Point Po = new Point();
         grand.set(grand.state.length);
-        Random rnd = new Random();
+        long start = System.nanoTime(),end; 
         //「Interation」の数だけ繰り返し
-        for(int t=0;t<Iteration;t++){
+        for(int i=0;i<Iteration;i++){
             //回数表示
-//            Print(t,grand);
+            if(i%(Iteration/100)==0&&i!=0){
+                end = System.nanoTime();
+                System.out.println("nomal_beta ="+(end - start)  + "ms");
+                if(i%(Iteration/10)==0)
+                    NotAntCheck(grand);
+                start = System.nanoTime();
+            }
             //すべての蟻で実行
             for(int an=0;an<ant.length;an++){
                 //drop
@@ -61,51 +63,27 @@ public class normal_beta {
                 }else if(is_unloading(ant[an])&&has_object(ant[an].Location,grand.state)){
                     double F = f(ant[an],grand.state);
                     double R = Math.random(),P=Ppick(F);
-                    /*if(P>R){
-                        ant[an].State=grand.state[ant[an].Location.y][ant[an].Location.x];
-                        grand.state[ant[an].Location.y][ant[an].Location.x]=0;
-                        //該当なし
-                    }*/
                     if(P>R){
                         ant[an].State=grand.state[ant[an].Location.y][ant[an].Location.x];
                         grand.state[ant[an].Location.y][ant[an].Location.x]=0;
-                        //該当なし
-                        if(ant[an].Memory.serch_memory(ant[an].State)&&!grand.MovingANT(ant[an].Memory.P[ant[an].State].x,ant[an].Memory.P[ant[an].State].y, ant[an])){
-                            int x = ant[an].Memory.P[ant[an].State].x,y = ant[an].Memory.P[ant[an].State].y;
-                            //ジャンプ先予定地に蟻がいなければジャンプ
-                            if(is_stayingAnt(grand.ant,ant[an].Memory.P[ant[an].State]))
-                                if(!grand.MovingANT(x,y,ant[an]))
-                                    System.out.println("s");
-                            else//予定地に方向に向かって移動？ 
-                                System.out.println("dame? ("+x+","+y+") "+grand.state[y][x]);
-
-                            //ジャンプ後一回数移動を試みる
-                            wander(t,ant[an],grand);
-                        }
-                    }
-                    
+                    }         
                 }
-                
-        /*        for(int j=1;j<=MAX_kind;j++)
+                //メモリーの供与
+                for(int j=1;j<=MAX_kind;j++)
                     if(ant[an].Memory.serch_memory(j)){//ある物体の情報がないとき
                         Po = antOperation.Memory(grand.ant,ant[an],ant,j);
                         if(0<Po.x&&0<Po.y)//付近のアリが情報を持っているならば
                             ant[an].Memory.set_memory(Po,j);
                     }
-
-           
-                if(ant[an].Memory.serch_memory(ant[an].State)&&!grand.MovingANT(ant[an].Memory.P[ant[an].State].x,ant[an].Memory.P[ant[an].State].y, ant[an])){
-                            int x = ant[an].Memory.P[ant[an].State].x,y = ant[an].Memory.P[ant[an].State].y;
-                            //ジャンプ先予定地に蟻がいなければジャンプ
-                            if(is_stayingAnt(grand.ant,ant[an].Memory.P[ant[an].State]))
-                                if(!grand.MovingANT(x,y,ant[an]))
-                                    System.out.println("s");
-                            else//予定地に方向に向かって移動？ 
-                                System.out.println("dame? ("+x+","+y+") "+grand.state[y][x]);
-                }
-          */      
+                //メモリーに保存されているなら
+                if(ant[an].State!=0&&ant[an].Memory.serch_memory(ant[an].State))
+                    //ジャンプ先予定地に蟻がいなければジャンプ
+                        if(is_stayingAnt(grand.ant,ant[an].Memory.P[ant[an].State])){
+                            grand.MovingANT(ant[an].Memory.P[ant[an].State].x,ant[an].Memory.P[ant[an].State].y,ant[an]);
+                            M.Moves(ant[an],grand);
+                        }
                 //ランダム移動
-                wander(t,ant[an],grand);
+                wander(i,ant[an],grand);
             }
             
         }
@@ -133,14 +111,15 @@ public class normal_beta {
         for (int i=0;i<grand.state.length;i++) {
             //要素の様子
             for(int j=0;j<grand.state.length;j++){
-                if(grand.state[i][j]!=0){
+/*                if(grand.state[i][j]!=0){
                     System.out.print(grand.state[i][j] + " ");
                     
                     object[grand.state[i][j]]++;
                 }else if(B[i][j]!=0)
                     System.out.print(B[i][j] + " ");
                 else
-                    System.out.print(0 + " ");
+                    System.out.print(0 + " ");*/
+                System.out.print(grand.state[i][j] + " ");
             }
             System.out.print("        ");
             //蟻の様子
@@ -263,7 +242,6 @@ public class normal_beta {
     private static void setData(Data data) {
         grand = data.grand;
     //蟻
-        ant_E = data.ant_E;
         ant = data.ant.clone(); 
     //*****************************************************************************//
         MAX_kind = data.MAX_kind;

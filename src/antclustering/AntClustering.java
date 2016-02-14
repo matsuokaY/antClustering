@@ -1,21 +1,11 @@
 package antclustering;
 
-import static antclustering.Field.MAX_kind;
-
-/*******
- * 0：配置なし
- * 1~kind：オブジェクト
- * kind+1：蟻
- * kind+2~kind*2+1：オブジェクトと蟻
- ******/
-
 public class AntClustering {
     static int size = 20;
-    static int object = 200;
+    static int object = 300;
     static int kind =  3;
-    static int ant = 100;
-  static int iteration = 1000000;
-//    static int iteration = 100000;
+    static int ant = 200;
+  static int iteration = 6000;
     static int limittime = 4;
     
     
@@ -26,26 +16,14 @@ public class AntClustering {
         Data data = read(size);
         Data data2 = read(size);
         Data data3 = read(size);
-//        data.read(size);
-//        data2.read(size);
-//        data3.read(size);
-        print(data2);
+        print(data);
         System.out.println("/****************************************************************************/");
-        long start = System.currentTimeMillis();
- //       normal_beta.local_initial_parameters(data);        
-        long end = System.currentTimeMillis();
-        System.out.println("nomal ="+(end - start)  + "ms");
-        
+        normal_beta.local_initial_parameters(data);        
         System.out.println("/****************************************************************************/");        
-        long start2 = System.currentTimeMillis();
         Field.local_initial(data2);
-        long end2 = System.currentTimeMillis();
-        System.out.println("field ="+(end2 - start2)  + "ms");
         System.out.println("/****************************************************************************/");
-        long start3 = System.currentTimeMillis();
-  //      normal.local_initial_parameters(data3);        
-        long end3 = System.currentTimeMillis();
-        System.out.println("nomal_beta ="+(end3 - start3)  + "ms");
+        normal.local_initial_parameters(data3);        
+
         
         System.out.println("\n終了");
     }
@@ -70,19 +48,6 @@ public class AntClustering {
             }
             System.out.println("");
         }
-/*        int[][] A = new int[data.grand.state.length][data.grand.state.length];
-        for(int k =0 ;k<data.ant.length;k++){
-            A[data.ant[k].Location.y][data.ant[k].Location.x]++;
-        }
-        for(int y=0;y<data.grand.state.length;y++){
-            for(int x=0;x<data.grand.state.length;x++)
-                System.out.print(data.grand.ant[y][x]+" ");
-            System.out.print("        ");
-            for(int x=0;x<data.grand.state.length;x++)
-                System.out.print(A[y][x]+" ");
-            System.out.println("");
-        }*/
-        
     }
 
     private static void write() {
@@ -93,15 +58,6 @@ public class AntClustering {
         //書き込み
         data.write();
     }
-    private static Data normal() {
-        Data data= new Data();
-        data.set(size, object, kind, ant, iteration, limittime);
-        data.Fieldset();
-        print(data);
-        //書き込み
-        return data;
-    }
-
     private static Data read(int size) {
         Data data= new Data();
         data.read(size);
