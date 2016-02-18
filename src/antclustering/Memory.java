@@ -7,6 +7,7 @@ public class Memory {
     Point[] P;
     int[] state;
     int number;
+    boolean all;
     
     Point F = new Point(-1,-1);
     void set_memory(Point P,int State) {
@@ -18,5 +19,16 @@ public class Memory {
             return true;
         else
             return false;
+    }
+    void all_serch(int kind){
+        int count=0;
+        for(int i=1;i<=kind;i++){
+            if(this.state[i]==1)
+                count++;
+        }
+        if(count==kind)
+            this.all=true;
+        else
+            this.all=false;
     }
 }

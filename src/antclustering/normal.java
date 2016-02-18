@@ -216,7 +216,7 @@ public class normal {
         double state=Math.sqrt(Math.pow(x1-x2,2)+Math.pow(y1-y2,2));
         return state;
     }
-    //なんとかなった？
+    //類似度
     static double f(ant ant,int[][] grand) {
         double result = 0,T=Threshold(),value=0,lenght;
         int state = ant.State,X = ant.Location.x,Y = ant.Location.y;

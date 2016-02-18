@@ -9,7 +9,7 @@ import static antclustering.antOperation.is_unloading;
 import java.awt.Point;
 
 
-public class normal_beta {
+public class normal_ganma {
     static int Range = 2;
     
     static Grand grand ;
@@ -27,11 +27,8 @@ public class normal_beta {
     public static void local_initial_parameters(Data data){
 //        grand.Check();
         setData(data);
- //       NotAntCheck(grand);                
-        long start = System.nanoTime();
+ //       NotAntCheck(grand);
         Clustering(grand,ant);
-        long end = System.nanoTime();
-        System.out.println((end - start));
  //       System.out.println("クラスタリング終了");
    //     System.out.println("\n/****************************************************************************/");
         Check(grand,ant);
@@ -42,25 +39,15 @@ public class normal_beta {
         grand.set(grand.state.length);
         long start = System.nanoTime(),end; 
         //「Interation」の数だけ繰り返し
-        for(int i=0;i<=Iteration;i++){
+        for(int i=0;i<Iteration;i++){
             //回数表示
- /*           if(i<=Iteration/10&&i%(Iteration/100)==0&&i!=0){
-                end = System.nanoTime();
-                System.out.println((end - start));
-                start = System.nanoTime();
-            }else if(i%(Iteration/10)==0&&i!=0){
-                end = System.nanoTime();
-                System.out.println((end - start));
-                start = System.nanoTime();
-            }
-*/           
-/*            if(i%(Iteration/100)==0&&i!=0){
+            if(i%(Iteration/100)==0&&i!=0){
                 end = System.nanoTime();
                 System.out.println("nomal_beta ="+(end - start)  + "ms");
             //    if(i%(Iteration/10)==0)
             //        NotAntCheck(grand);
                 start = System.nanoTime();
-            }*/
+            }
             //すべての蟻で実行
             for(int an=0;an<ant.length;an++){
                 //drop
@@ -82,12 +69,15 @@ public class normal_beta {
                     }         
                 }
                 //メモリーの供与
-                for(int j=1;j<=MAX_kind;j++)
-                    if(ant[an].Memory.serch_memory(j)){//ある物体の情報がないとき
-                        Po = antOperation.Memory(grand.ant,ant[an],ant,j);
-                        if(0<Po.x&&0<Po.y)//付近のアリが情報を持っているならば
-                            ant[an].Memory.set_memory(Po,j);
-                    }
+                if(ant[an].Memory.all == false){
+                    for(int j=1;j<=MAX_kind;j++)
+                        if(ant[an].Memory.serch_memory(j)){//ある物体の情報がないとき
+                            Po = antOperation.Memory(grand.ant,ant[an],ant,j);
+                            if(0<Po.x&&0<Po.y)//付近のアリが情報を持っているならば
+                                ant[an].Memory.set_memory(Po,j);
+                        }
+                    ant[an].Memory.all_serch(MAX_kind);
+                }
                 //メモリーに保存されているなら
                 if(ant[an].State!=0&&ant[an].Memory.serch_memory(ant[an].State))
                     //ジャンプ先予定地に蟻がいなければジャンプ
