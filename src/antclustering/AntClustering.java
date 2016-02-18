@@ -4,7 +4,7 @@ public class AntClustering {
     static int size = 20;
     static int object = 300;
     static int kind =  3;
-    static int ant = 100;
+    static int ant = 200;
   static int iteration = 6000;
     static int limittime = 4;
     
@@ -13,9 +13,9 @@ public class AntClustering {
         //書き込み
     //    write();
         //読み込み
-        Data data = read(size);
-        Data data2 = read(size);
-        Data data3 = read(size);
+        Data data = read();
+        Data data2 = read();
+        Data data3 = read();
         print(data);
         System.out.println("/****************************************************************************/");
         normal_beta.local_initial_parameters(data);        
@@ -59,9 +59,9 @@ public class AntClustering {
         //書き込み
         data.write();
     }
-    private static Data read(int size) {
+    private static Data read() {
         Data data= new Data();
-        data.read(size);
+        int size = data.read();
         data.set(size, object, kind, ant, iteration, limittime);
         data.setting();
         return data;

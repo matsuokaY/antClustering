@@ -142,6 +142,7 @@ public class Data {
                 B[ant[k].Location.y][ant[k].Location.x]=ant[k].State+1;
             }
             FileWriter wr=new FileWriter("file.txt");//Fileとアプリを書き込みでつなぐ
+            wr.write(String.valueOf(this.MAX_size)+"\r\n");
             for(int i=0;i<this.MAX_size;i++){
                 for(int j=0;j<this.MAX_size;j++){
                     wr.write(String.valueOf(this.grand.ant[i][j]+1)+" ");
@@ -160,7 +161,7 @@ public class Data {
         }
     }
     //faileから呼び出し
-    public void read(int size){
+    public int read(){
         String line,line2;
         String[] fruit,fruit2;
         int j=0;
@@ -168,6 +169,7 @@ public class Data {
         try{//ファイルをか使うには、例外処理が必要
             FileReader rd=new FileReader("file.txt");//読み取り用として、ファイルとアプリを繋ぐ
             BufferedReader br = new BufferedReader(rd);
+            int size = Integer.parseInt(br.readLine().split(" ",0)[0]);
             this.grand.state = new int[size][size];
             this.grand.ant = new int[size][size];
             while((line = br.readLine()) != null){
@@ -182,10 +184,11 @@ public class Data {
                 }
             }
             rd.close();//閉じる
-
+            return size;
         }catch(IOException e){
             //エラーが発生したら　エラーを表示
             System.out.println("Err="+e);
+            return 0;
         }
     }
     //呼出し後アリをセット

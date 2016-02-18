@@ -70,12 +70,15 @@ public class Field {
                     }else
                         ant[an].time++;
                 //メモリの受け渡し
-                for(int j=1;j<=MAX_kind;j++)
-                    if(ant[an].Memory.serch_memory(j)){//ある物体の情報がないとき
-                        P = antOperation.Memory(grand.ant,ant[an],ant,j);
-                        if(0<P.x&&0<P.y)//付近のアリが情報を持っているならば
-                            ant[an].Memory.set_memory(P,j);
-                    }
+                if(ant[an].Memory.all == false){
+                    for(int j=1;j<=MAX_kind;j++)
+                        if(ant[an].Memory.serch_memory(j)){//ある物体の情報がないとき
+                            P = antOperation.Memory(grand.ant,ant[an],ant,j);
+                            if(0<P.x&&0<P.y)//付近のアリが情報を持っているならば
+                                ant[an].Memory.set_memory(P,j);
+                        }
+                    ant[an].Memory.all_serch(MAX_kind);
+                }
                 //物を持っている かつ　メモリに保存されている　とき             
                 if(ant[an].State!=0&&ant[an].Memory.serch_memory(ant[an].State))
                     //ジャンプ先予定地に蟻がいなければジャンプ
