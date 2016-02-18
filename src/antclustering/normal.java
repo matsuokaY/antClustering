@@ -12,7 +12,6 @@ public class normal {
     
     static Grand grand ;
     //蟻
-    static int ant_E;
     static ant[] ant; 
     //*****************************************************************************//
     static int MAX_kind;

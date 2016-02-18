@@ -14,12 +14,7 @@ public class Data {
     public Grand grand ;
     //蟻
     public ant[] ant;
-    //閾値
-    static final double A = 1;
-    static final double Kp = 1;
-    static final double Kd = 0.3;
-    static int Range = 2;
-    static double V = 2;
+    
     static final int Memory_size = 6;   
     //*****************************************************************************//
     public int MAX_size;
@@ -30,13 +25,7 @@ public class Data {
     public int ANT;
     //繰り返し回数
     public int Iteration;
-    public int limitMoveTime;
-    public int limitKeepTime;
     public int limitCount;
-    //繰り返し回数の半分
-    public int HalfIteration;
-    //繰り返し回数の三分の一
-    public int ThirdIteration;
     //*****************************************************************************//
     //***数値の初期化***//
     public void set(int size,int object,int kind,int ant,int iteration,int limitmovetime){
@@ -103,10 +92,6 @@ public class Data {
         //繰り返し回数
         Iteration = data.Iteration;
         limitCount = data.limitCount;
-        //繰り返し回数の半分
-        HalfIteration = data.HalfIteration;
-        //繰り返し回数の三分の一
-        ThirdIteration = data.ThirdIteration;
         //*****************************************************************************//
         this.grand = new Grand();
         this.grand.state = new int[data.MAX_size][data.MAX_size];

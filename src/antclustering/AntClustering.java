@@ -20,9 +20,9 @@ public class AntClustering {
         System.out.println("/****************************************************************************/");
         normal_beta.local_initial_parameters(data);        
         System.out.println("/****************************************************************************/");        
-    //    Field.local_initial(data2);
+        Field.local_initial(data2);
         System.out.println("/****************************************************************************/");
-//        normal.local_initial_parameters(data3);        
+        normal.local_initial_parameters(data3);        
         normal_ganma.local_initial_parameters(data2);        
 
         

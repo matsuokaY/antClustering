@@ -5,45 +5,7 @@ import java.awt.Point;
 import java.util.ArrayList;
 
 
-class value{
-    ant[] ant;
-    Grand grand;
-}
-
-class result{
-    int value;
-    int state;
-}
-
 public class antOperation {
-    static int pickCount = 4;
-    static int dropCount = 3;
-
-    static final int R = 4;
-    static final int r = 1;
-    
-    //***周りがpickCount以下なら持ち上げる***//
-    public static boolean pickObject(int an,int iteration){
-        //三分の一
-        if(iteration<Field.Iteration/2)
-            return an<=pickCount-1;
-        //三分の二
-        else if(iteration<Field.Iteration/3*2)
-            return an<=pickCount;
-        //残り
-        else
-            return an<=pickCount;
-    }
-    //***周りがpickCount以上なら降ろす***//
-    public static boolean dropObject(int an,int iteration){
-        if(iteration<Field.Iteration/2)
-            return an>=dropCount-1;
-        else if(iteration<Field.Iteration/3*2)
-            return an>=dropCount;
-        else
-            return an>=dropCount;
-    }
-
             //蟻がいるかどうか
     static boolean is_stayingAnt(int[][] A,Point P){
         if(A[P.y][P.x]==0)
@@ -92,14 +54,6 @@ public class antOperation {
         return result;
     }
 
-    public static void c (ant[] ant){
-        for(int t=0;t<ant.length;t++)
-            for(int s=0;s<ant.length;s++)
-                if(t!=s&&ant[t].Location.x==ant[s].Location.x&&ant[t].Location.y==ant[s].Location.y)
-                    System.out.println(t+" "+s);
-        
-    }
-    
     static final int[] movex = {-1, 0, 1,-1, 1,-1, 0, 1};
     static final int[] movey = {-1,-1,-1, 0, 0, 1, 1, 1};
     static Point Memory(int[][] grand,ant an,ant[] ant,int State) {

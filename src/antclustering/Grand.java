@@ -6,10 +6,8 @@ import java.awt.Point;
 //      a[y][x]
 public class Grand {
     public int[][] state;
-//    public int[][] cloneState;
     public int[][] ant;
     
-//    public C[] C;
     public int MAX_size;
     public void set(int size){
         MAX_size = size;
