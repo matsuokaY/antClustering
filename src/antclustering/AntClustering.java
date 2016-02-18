@@ -2,8 +2,8 @@ package antclustering;
 
 public class AntClustering {
     static int size = 20;
-    static int object = 300;
-    static int kind =  3;
+    static int object = 200;
+    static int kind =  1;
     static int ant = 200;
   static int iteration = 6000;
     static int limittime = 4;
@@ -11,16 +11,16 @@ public class AntClustering {
     
     public static void main(String[] args) {
         //書き込み
-    //    write();
+        write();
         //読み込み
-        Data data = read(size);
-        Data data2 = read(size);
-        Data data3 = read(size);
+        Data data = read();
+        Data data2 = read();
+        Data data3 = read();
         print(data);
         System.out.println("/****************************************************************************/");
         normal_beta.local_initial_parameters(data);        
         System.out.println("/****************************************************************************/");        
-        Field.local_initial(data2);
+    //    Field.local_initial(data2);
         System.out.println("/****************************************************************************/");
         normal.local_initial_parameters(data3);        
 
@@ -39,13 +39,21 @@ public class AntClustering {
             System.out.print("        ");
             //蟻の様子
             for(int j=0;j<data.grand.state.length;j++){
+                if(data.grand.ant[i][j]!=0){
+                    System.out.print(1+" ");
+                }else
+                    System.out.print(0+" ");
+            }
+            System.out.print("        ");
+            /*
+            for(int j=0;j<data.grand.state.length;j++){
                 if(data.grand.ant[i][j]!=0&&data.grand.ant[i][j]<10)
                     System.out.print(0+""+(data.grand.ant[i][j]) + " ");
                 else if(data.grand.ant[i][j]!=0)
                     System.out.print(data.grand.ant[i][j] + " ");
                 else
                     System.out.print(0+""+0 + " ");
-            }
+            }*/
             System.out.println("");
         }
     }
@@ -58,10 +66,10 @@ public class AntClustering {
         //書き込み
         data.write();
     }
-    private static Data read(int size) {
+    private static Data read() {
         Data data= new Data();
-        data.read(size);
-        data.set(size, object, kind, ant, iteration, limittime);
+        data.read();
+        data.set(data.grand.ant.length, object, kind, ant, iteration, limittime);
         data.setting();
         return data;
     }

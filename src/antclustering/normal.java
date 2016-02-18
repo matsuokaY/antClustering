@@ -26,7 +26,10 @@ public class normal {
 //        grand.Check();
         setData(data);
  //       NotAntCheck(grand);
+        long start = System.nanoTime();
         Clustering(grand,ant);
+        long end = System.nanoTime();
+        System.out.println((end - start));
    //     System.out.println("\n/****************************************************************************/");
         Check(grand,ant);
     }
@@ -35,8 +38,18 @@ public class normal {
         grand.set(grand.state.length);
         long start = System.nanoTime(),end; 
         //「Interation」の数だけ繰り返し
-        for(int i=0;i<Iteration;i++){
+        for(int i=0;i<=Iteration;i++){
             //回数表示
+/*            if(i<=Iteration/10&&i%(Iteration/100)==0&&i!=0){
+                end = System.nanoTime();
+                System.out.println((end - start));
+                start = System.nanoTime();
+            }else if(i%(Iteration/10)==0&&i!=0){
+                end = System.nanoTime();
+                System.out.println((end - start));
+                start = System.nanoTime();
+            }*/
+            
             if(i%(Iteration/100)==0&&i!=0){
                 end = System.nanoTime();
                 System.out.println("nomal ="+(end - start)  + "ms");

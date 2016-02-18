@@ -39,11 +39,11 @@ public class Field {
         long start = System.nanoTime(),end;
         Random rnd = new Random();
         //「Interation」の数だけ繰り返し
-        for(int i=0;i<Iteration;i++){
+        for(int i=0;i<=Iteration;i++){
             //回数表示
             if(i%(Iteration/100)==0&&i!=0){
                 end = System.nanoTime();
-                System.out.println("field ="+(end - start)  + "ms");
+                System.out.println("field ="+(end - start)  + "μs");
                 if(i%(Iteration/10)==0)
                     NotAntCheck(grand);
                 start = System.nanoTime();
