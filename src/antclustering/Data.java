@@ -140,10 +140,11 @@ public class Data {
         try{//ファイルの書き込みにはエラー処理がいる。
             int[][] B = new int[grand.state.length][grand.state.length];
             for(int k=0;k<ant.length;k++){
-            if(ant[k].State!=0)
-                B[ant[k].Location.y][ant[k].Location.x]=ant[k].State+1;
+                if(ant[k].State!=0)
+                    B[ant[k].Location.y][ant[k].Location.x]=ant[k].State+1;
             }
             FileWriter wr=new FileWriter("file.txt");//Fileとアプリを書き込みでつなぐ
+            wr.write(String.valueOf(this.MAX_size)+"\r\n");
             for(int i=0;i<this.MAX_size;i++){
                 for(int j=0;j<this.MAX_size;j++){
                     wr.write(String.valueOf(this.grand.ant[i][j]+1)+" ");
@@ -162,7 +163,7 @@ public class Data {
         }
     }
     //faileから呼び出し
-    public void read(int size){
+    public void read(){
         String line,line2;
         String[] fruit,fruit2;
         int j=0;
@@ -170,6 +171,7 @@ public class Data {
         try{//ファイルをか使うには、例外処理が必要
             FileReader rd=new FileReader("file.txt");//読み取り用として、ファイルとアプリを繋ぐ
             BufferedReader br = new BufferedReader(rd);
+            int size = Integer.parseInt(br.readLine());
             this.grand.state = new int[size][size];
             this.grand.ant = new int[size][size];
             while((line = br.readLine()) != null){
