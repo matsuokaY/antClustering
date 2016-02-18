@@ -6,10 +6,10 @@ import java.awt.Point;
 //      a[y][x]
 public class Grand {
     public int[][] state;
-    public int[][] cloneState;
+//    public int[][] cloneState;
     public int[][] ant;
     
-    public C[] C;
+//    public C[] C;
     public int MAX_size;
     public void set(int size){
         MAX_size = size;
@@ -29,12 +29,7 @@ public class Grand {
     public void removeAnt(int x,int y){
         this.ant[y][x] = 00;
     }
-    public void setCloneState(){
-        this.cloneState = state.clone();
-    }
-    public void resetState(){
-        this.state = cloneState;
-    }
+
     public boolean checkObject(int x,int y,int object){
         return state[y][x] == object;
     }

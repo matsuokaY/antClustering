@@ -57,8 +57,6 @@ public class Data {
         grand = new Grand();
         grand.state = new int[MAX_size][MAX_size];
         grand.ant = new int[MAX_size][MAX_size];
-//        grand.pheromone = new double[MAX_kind+1][MAX_size][MAX_size];
-        grand.C = new C[MAX_kind];
         ant = new ant[MAX_ant];
         int object_x,object_y,object_kind,ant_size=0,object_size=0;
         

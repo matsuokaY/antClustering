@@ -4,7 +4,7 @@ public class AntClustering {
     static int size = 20;
     static int object = 300;
     static int kind =  3;
-    static int ant = 200;
+    static int ant = 100;
   static int iteration = 6000;
     static int limittime = 4;
     
@@ -20,9 +20,10 @@ public class AntClustering {
         System.out.println("/****************************************************************************/");
         normal_beta.local_initial_parameters(data);        
         System.out.println("/****************************************************************************/");        
-        Field.local_initial(data2);
+//        Field.local_initial(data2);
         System.out.println("/****************************************************************************/");
-        normal.local_initial_parameters(data3);        
+//        normal.local_initial_parameters(data3);        
+        normal_ganma.local_initial_parameters(data2);        
 
         
         System.out.println("\n終了");

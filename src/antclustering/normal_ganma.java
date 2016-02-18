@@ -9,7 +9,7 @@ import static antclustering.antOperation.is_unloading;
 import java.awt.Point;
 
 
-public class normal_beta {
+public class normal_ganma {
     static int Range = 2;
     
     static Grand grand ;
@@ -69,12 +69,15 @@ public class normal_beta {
                     }         
                 }
                 //メモリーの供与
-                for(int j=1;j<=MAX_kind;j++)
-                    if(ant[an].Memory.serch_memory(j)){//ある物体の情報がないとき
-                        Po = antOperation.Memory(grand.ant,ant[an],ant,j);
-                        if(0<Po.x&&0<Po.y)//付近のアリが情報を持っているならば
-                            ant[an].Memory.set_memory(Po,j);
-                    }
+                if(ant[an].Memory.all == false){
+                    for(int j=1;j<=MAX_kind;j++)
+                        if(ant[an].Memory.serch_memory(j)){//ある物体の情報がないとき
+                            Po = antOperation.Memory(grand.ant,ant[an],ant,j);
+                            if(0<Po.x&&0<Po.y)//付近のアリが情報を持っているならば
+                                ant[an].Memory.set_memory(Po,j);
+                        }
+                    ant[an].Memory.all_serch(MAX_kind);
+                }
                 //メモリーに保存されているなら
                 if(ant[an].State!=0&&ant[an].Memory.serch_memory(ant[an].State))
                     //ジャンプ先予定地に蟻がいなければジャンプ

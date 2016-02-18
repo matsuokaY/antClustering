@@ -23,10 +23,6 @@ public class ant {
         this.No = z;
     }
      
-    public void Pick(int x,int y,Grand grand){
-        this.State = grand.cloneState[y][x];
-        grand.cloneState[y][x] = 0;
-    }
     public int Drop(){
         int result = this.State;
         this.State = 0;
